@@ -94,13 +94,12 @@ namespace Essentials
             {
                 if (commands[0] != null && commands[0].Trim().Length > 0) //If it is not nothing, and the string is actually something
                 {
-                    if ((commands[0].Equals("/essentials") || commands[0].Equals("/ess")) && warp.enabled)
+                    if (commands[0].Equals("/warp") && warp.enabled)
                     {
                         Player sendingPlayer = Event.getPlayer();
                         if (commands.Length < 2)
                         {
-                            sendingPlayer.sendMessage("Essentials plugin, For Build: #" + ServerProtocol, 255, 255f, 255f, 255f);
-                            sendingPlayer.sendMessage("For help, type /essentials help", 255, 255f, 255f, 255f);
+                            sendingPlayer.sendMessage("For help, type /warp help", 255, 255f, 255f, 255f);
                         }
                         else if (commands[1].Equals("+"))
                         {

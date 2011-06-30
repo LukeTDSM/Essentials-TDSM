@@ -87,7 +87,7 @@ namespace Essentials
             }
             else
             {
-                player.sendMessage("Error: warp " + warpName + "does not exist.", 255, 255f, 255f, 255f);
+                player.sendMessage("Error: warp " + warpName + " does not exist.", 255, 255f, 255f, 255f);
             }
         }
         
