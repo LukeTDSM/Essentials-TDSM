@@ -37,7 +37,7 @@ namespace Essentials
             Description = "Essential commands for TDSM.";
             Author = "Essentials";
             Version = "1";
-            TDSMBuild = 15;
+            TDSMBuild = 16;
 
             string pluginFolder = Statics.getPluginPath + Statics.systemSeperator + "Essentials";
             //Create folder if it doesn't exist
@@ -124,10 +124,10 @@ namespace Essentials
                         {
                             warp.Warp(sendingPlayer, commands[1]);
                         }
+                        Event.setCancelled(true);
                     }
                 }
             }
-            Event.setCancelled(true);
         }
 
         public override void onPlayerJoin(PlayerLoginEvent Event)
