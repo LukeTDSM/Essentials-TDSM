@@ -27,7 +27,6 @@ namespace Essentials
         // tConsole is used for when logging Output to the console & a log file.
 
         public Properties properties;
-        public bool spawningAllowed = false;
         public bool tileBreakageAllowed = false;
         public bool isEnabled = false;
         public EssentialsWarp warp;
@@ -72,12 +71,6 @@ namespace Essentials
             //Register Hooks
             this.registerHook(Hooks.PLAYER_COMMAND);
             //this.registerHook(Hooks.PLAYER_LOGIN);
-
-            Main.stopSpawns = isEnabled;
-            if (isEnabled)
-            {
-                Program.tConsole.WriteLine("Disabled NPC Spawning");
-            }
         }
 
         public override void Disable()
