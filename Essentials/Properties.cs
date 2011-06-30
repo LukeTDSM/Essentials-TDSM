@@ -15,26 +15,26 @@ namespace Essentials
 
         public void pushData()
         {
-            setSpawningCancelled(isSpawningCancelled());
+            setSpawningCancelled(isWarpEnabled());
             setTileBreakage(getTileBreakage());
         }
 
-        public bool isSpawningCancelled()
+        public bool isWarpEnabled()
         {
-            string AllowSpawns = base.getValue("allowspawns");
-            if (AllowSpawns == null || AllowSpawns.Trim().Length < 0)
+            string WarpEnabled = base.getValue("warpEnabled");
+            if (WarpEnabled == null || WarpEnabled.Trim().Length < 0)
             {
                 return true;
             }
             else
             {
-                return Boolean.Parse(AllowSpawns);
+                return Boolean.Parse(WarpEnabled);
             }
         }
 
-        public void setSpawningCancelled(bool AllowSpawns)
+        public void setSpawningCancelled(bool WarpEnabled)
         {
-            base.setValue("allowspawns", AllowSpawns.ToString());
+            base.setValue("warpEnabled", WarpEnabled.ToString());
         }
 
         public bool getTileBreakage()

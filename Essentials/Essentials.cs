@@ -53,13 +53,14 @@ namespace Essentials
             properties.Load();
             properties.pushData(); //Creates default values if needed.
             properties.Save();
+            
+            //setup new Warp
+            warp = new EssentialsWarp(pluginFolder + Statics.systemSeperator + "warps.xml");
 
             //read properties data
-            spawningAllowed = properties.isSpawningCancelled();
-            tileBreakageAllowed = properties.getTileBreakage();
+            warp.enabled = properties.isWarpEnabled();
 
-            //setup new warps.xml file
-            warp = new EssentialsWarp(pluginFolder + Statics.systemSeperator + "warps.xml");
+            
             //xml.SetupXml();
 
             isEnabled = true;
@@ -70,7 +71,7 @@ namespace Essentials
             Program.tConsole.WriteLine(base.Name + " enabled.");
             //Register Hooks
             this.registerHook(Hooks.PLAYER_COMMAND);
-            this.registerHook(Hooks.PLAYER_LOGIN);
+            //this.registerHook(Hooks.PLAYER_LOGIN);
 
             Main.stopSpawns = isEnabled;
             if (isEnabled)
@@ -93,14 +94,13 @@ namespace Essentials
             {
                 if (commands[0] != null && commands[0].Trim().Length > 0) //If it is not nothing, and the string is actually something
                 {
-                    if (commands[0].Equals("/warp"))
+                    if ((commands[0].Equals("/essentials") || commands[0].Equals("/ess")) && warp.enabled)
                     {
                         Player sendingPlayer = Event.getPlayer();
                         if (commands.Length < 2)
                         {
-                            Program.tConsole.WriteLine("[Warp] " + Event.getPlayer().name + " used /warp.");
-                            sendingPlayer.sendMessage("Warp plugin, For Build: #" + ServerProtocol, 255, 255f, 255f, 255f);
-                            sendingPlayer.sendMessage("For help, type /warp help", 255, 255f, 255f, 255f);
+                            sendingPlayer.sendMessage("Essentials plugin, For Build: #" + ServerProtocol, 255, 255f, 255f, 255f);
+                            sendingPlayer.sendMessage("For help, type /essentials help", 255, 255f, 255f, 255f);
                         }
                         else if (commands[1].Equals("+"))
                         {

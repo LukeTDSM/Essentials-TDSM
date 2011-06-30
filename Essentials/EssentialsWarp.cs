@@ -10,8 +10,9 @@ namespace Essentials
 {
     public class EssentialsWarp
     {
+        public bool enabled;
         //public XmlDocument warpFile;
-        private string warpProps;
+        //private string warpProps;
         /////private XmlReader reader;
         ////private bool firstrun = false;
         //private XPathNavigator navi;
