@@ -140,6 +140,7 @@ namespace Essentials
                         if (!sendingPlayer.isOp())
                         {
                             sendingPlayer.sendMessage("Error: you must be Op to use /slay");
+                            return;
                         }
                         if (commands.Length < 2)
                         {
@@ -150,8 +151,7 @@ namespace Essentials
                             try
                             {
                                 Player targetPlayer = Program.server.GetPlayerByName(commands[1]);
-                                Terraria_Server.NetMessage.SendData(26, -1, -1, "", targetPlayer.whoAmi, 0, (float)9999, (float)0);
-                                NetMessage.SendData(25, -1, -1, targetPlayer.name + " of unknown causes...", 255, 225f, 25f, 25f, 0);
+                                NetMessage.SendData(26, -1, -1, " of unknown causes...", targetPlayer.whoAmi, 0, (float)9999, (float)0);
                                 sendingPlayer.sendMessage("OMG!  You killed " + commands[1] + "!", 255, 0f, 255f, 255f);
                             }
                             catch (NullReferenceException)
