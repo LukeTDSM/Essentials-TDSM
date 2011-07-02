@@ -9,6 +9,7 @@ using System.Xml;
 using Essentials;
 using Terraria_Server.Plugin;
 using Terraria_Server;
+using Terraria_Server.Commands;
 using Terraria_Server.Events;
 
 namespace Essentials
@@ -54,7 +55,7 @@ namespace Essentials
             properties.Save();
             
             //setup new Warp
-            warp = new EssentialsWarp(pluginFolder + Statics.systemSeperator + "warps.xml");
+            warp = new EssentialsWarp(pluginFolder + Statics.systemSeperator + "warps.json");
 
             //read properties data
             warp.enabled = properties.isWarpEnabled();
@@ -140,7 +141,7 @@ namespace Essentials
                         {
                             sendingPlayer.sendMessage("Error: you must be Op to use /slay");
                         }
-                        else if (commands.Length < 2)
+                        if (commands.Length < 2)
                         {
                             sendingPlayer.sendMessage("Error: you must specify a player to slay");
                         }
@@ -148,10 +149,10 @@ namespace Essentials
                         {
                             try
                             {
-                                Player killedPlayer = Program.server.GetPlayerByName(commands[1]);//.Hurt(200, 0, false, false, " died of unknown causes");
-                                killedPlayer.KillMe(10000, 0, false, " died of unknown causes...");
-                                sendingPlayer.sendMessage("OMG!  You killed" + commands[1], 255, 0f, 255f, 255f);
-                                Program.tConsole.WriteLine("[Essentials] " + sendingPlayer.getName() + " used Slay on: " + killedPlayer.getName());
+                                Player targetPlayer = Program.server.GetPlayerByName(commands[1]);
+                                Terraria_Server.NetMessage.SendData(26, -1, -1, "", targetPlayer.whoAmi, 0, (float)9999, (float)0);
+                                NetMessage.SendData(25, -1, -1, targetPlayer.name + " of unknown causes...", 255, 225f, 25f, 25f, 0);
+                                sendingPlayer.sendMessage("OMG!  You killed " + commands[1] + "!", 255, 0f, 255f, 255f);
                             }
                             catch (NullReferenceException)
                             {
