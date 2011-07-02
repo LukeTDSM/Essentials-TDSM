@@ -68,11 +68,11 @@ namespace Essentials
             if(warplist.ContainsKey(warpName))
             {
                 warplist.Remove(warpName);
-                player.sendMessage("Warp " + warpName + " removed.", 255, 255f, 255f, 255f);
+                player.sendMessage("Warp " + warpName + " removed.", 255, 0f, 255f, 255f);
             }
             else
             {
-                player.sendMessage("Error: Warp " + warpName + " does not exist.", 255, 255f, 255f, 255f);
+                player.sendMessage("Error: Warp " + warpName + " does not exist.");
             }
         }
 
@@ -83,11 +83,11 @@ namespace Essentials
                 Vector2 warpLoc = new Vector2();
                 warplist.TryGetValue(warpName, out warpLoc);
                 player.teleportTo(warpLoc.X, warpLoc.Y);
-                player.sendMessage("Warped to " + warpName + ".", 255, 255f, 255f, 255f);
+                player.sendMessage("Warped to " + warpName + ".", 255, 0f, 255f, 255f);
             }
             else
             {
-                player.sendMessage("Error: warp " + warpName + " does not exist.", 255, 255f, 255f, 255f);
+                player.sendMessage("Error: warp " + warpName + " does not exist.");
             }
         }
         
@@ -96,11 +96,11 @@ namespace Essentials
            if (!warplist.ContainsKey(warpName))
             {
                 warplist.Add(warpName, player.getLocation());
-                player.sendMessage("Warp " + warpName + " created.", 255, 255f, 255f, 255f);
+                player.sendMessage("Warp " + warpName + " created.", 255, 0f, 255f, 255f);
             }
             else
             {
-                player.sendMessage("Error: Warp " + warpName + " already exists.", 255, 255f, 255f, 255f);
+                player.sendMessage("Error: Warp " + warpName + " already exists.");
             }
         }
 

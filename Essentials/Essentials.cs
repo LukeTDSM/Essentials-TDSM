@@ -87,42 +87,76 @@ namespace Essentials
             {
                 if (commands[0] != null && commands[0].Trim().Length > 0) //If it is not nothing, and the string is actually something
                 {
-                    if (commands[0].Equals("/warp") && warp.enabled)
+                    if (commands[0].Equals("/warp"))
                     {
                         Player sendingPlayer = Event.getPlayer();
-                        if (commands.Length < 2)
+                        if(warp.enabled)
                         {
-                            sendingPlayer.sendMessage("For help, type /warp help", 255, 255f, 255f, 255f);
-                        }
-                        else if (commands[1].Equals("+"))
-                        {
-                            if (commands.Length < 3)
-                                sendingPlayer.sendMessage("Add warp error: format must be /warp + <warpname>", 255, 255f, 255f, 255f);
-                            else
+                            if (commands.Length < 2)
                             {
-                                warp.WriteWarp(sendingPlayer, commands[2]);
+                                sendingPlayer.sendMessage("For help, type /warp help", 255, 0f, 255f, 255f);
                             }
-                        }
-                        else if (commands[1].Equals("-"))
-                        {
-                            if (commands.Length < 3)
-                                sendingPlayer.sendMessage("Remove warp error: format must be /warp - <warpname>", 255, 255f, 255f, 255f);
-                            else
+                            else if (commands[1].Equals("+"))
                             {
-                                warp.DelWarp(sendingPlayer, commands[2]);
+                                if (commands.Length < 3)
+                                    sendingPlayer.sendMessage("Add warp error: format must be /warp + <warpname>");
+                                else
+                                {
+                                    warp.WriteWarp(sendingPlayer, commands[2]);
+                                }
                             }
-                        }
-                        else if (commands[1].Equals("help"))
-                        {
+                            else if (commands[1].Equals("-"))
+                            {
+                                if (commands.Length < 3)
+                                    sendingPlayer.sendMessage("Remove warp error: format must be /warp - <warpname>");
+                                else
+                                {
+                                    warp.DelWarp(sendingPlayer, commands[2]);
+                                }
+                            }
+                            else if (commands[1].Equals("help"))
+                            {
 
+                            }
+                            else if (commands[1].Equals("loc"))
+                            {
+                                sendingPlayer.sendMessage("Current position (x,y): (" + sendingPlayer.getLocation().X.ToString() + "," + sendingPlayer.getLocation().Y.ToString() + ").", 255, 255f, 255f, 255f);
+                            }
+                            else if (commands.Length < 3)
+                            {
+                                warp.Warp(sendingPlayer, commands[1]);
+                            }
                         }
-                        else if (commands[1].Equals("loc"))
+                        else
                         {
-                            sendingPlayer.sendMessage("Current position (x,y): (" + sendingPlayer.getLocation().X.ToString() + "," + sendingPlayer.getLocation().Y.ToString() + ").", 255, 255f, 255f, 255f);
+                            sendingPlayer.sendMessage("Error: Warp not enabled");
                         }
-                        else if (commands.Length < 3)
+                        Event.setCancelled(true);
+                    }
+                    else if (commands[0].Equals("/slay"))
+                    {
+                        Player sendingPlayer = Event.getPlayer();
+                        if (!sendingPlayer.isOp())
                         {
-                            warp.Warp(sendingPlayer, commands[1]);
+                            sendingPlayer.sendMessage("Error: you must be Op to use /slay");
+                        }
+                        else if (commands.Length < 2)
+                        {
+                            sendingPlayer.sendMessage("Error: you must specify a player to slay");
+                        }
+                        else
+                        {
+                            try
+                            {
+                                Player killedPlayer = Program.server.GetPlayerByName(commands[1]);//.Hurt(200, 0, false, false, " died of unknown causes");
+                                killedPlayer.KillMe(10000, 0, false, " died of unknown causes...");
+                                sendingPlayer.sendMessage("OMG!  You killed" + commands[1], 255, 0f, 255f, 255f);
+                                Program.tConsole.WriteLine("[Essentials] " + sendingPlayer.getName() + " used Slay on: " + killedPlayer.getName());
+                            }
+                            catch (NullReferenceException)
+                            {
+                                sendingPlayer.sendMessage("Error: Player not online.");
+                            }
                         }
                         Event.setCancelled(true);
                     }
