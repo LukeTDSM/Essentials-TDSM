@@ -37,7 +37,7 @@ namespace Essentials
             Name = "Essentials";
             Description = "Essential commands for TDSM.";
             Author = "Essentials";
-            Version = "1";
+            Version = "0.1";
             TDSMBuild = 16;
 
             string pluginFolder = Statics.getPluginPath + Statics.systemSeperator + "Essentials";
@@ -55,13 +55,10 @@ namespace Essentials
             properties.Save();
             
             //setup new Warp
-            warp = new EssentialsWarp(pluginFolder + Statics.systemSeperator + "warps.json");
+            warp = new EssentialsWarp(pluginFolder + Statics.systemSeperator + "warps.xml");
 
             //read properties data
             warp.enabled = properties.isWarpEnabled();
-
-            
-            //xml.SetupXml();
 
             isEnabled = true;
         }
@@ -119,10 +116,6 @@ namespace Essentials
                             {
 
                             }
-                            else if (commands[1].Equals("loc"))
-                            {
-                                sendingPlayer.sendMessage("Current position (x,y): (" + sendingPlayer.getLocation().X.ToString() + "," + sendingPlayer.getLocation().Y.ToString() + ").", 255, 255f, 255f, 255f);
-                            }
                             else if (commands.Length < 3)
                             {
                                 warp.Warp(sendingPlayer, commands[1]);
@@ -153,6 +146,7 @@ namespace Essentials
                                 Player targetPlayer = Program.server.GetPlayerByName(commands[1]);
                                 NetMessage.SendData(26, -1, -1, " of unknown causes...", targetPlayer.whoAmi, 0, (float)9999, (float)0);
                                 sendingPlayer.sendMessage("OMG!  You killed " + commands[1] + "!", 255, 0f, 255f, 255f);
+                                Program.tConsole.WriteLine("Player " + sendingPlayer.getName() + " used /slay on " + targetPlayer.getName());
                             }
                             catch (NullReferenceException)
                             {
