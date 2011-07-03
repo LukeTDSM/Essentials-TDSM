@@ -37,7 +37,7 @@ namespace Essentials
             Name = "Essentials";
             Description = "Essential commands for TDSM.";
             Author = "Essentials";
-            Version = "0.1";
+            Version = "0.1.5";
             TDSMBuild = 16;
 
             string pluginFolder = Statics.getPluginPath + Statics.systemSeperator + "Essentials";

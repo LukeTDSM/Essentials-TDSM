@@ -139,7 +139,7 @@ namespace Essentials
             {
                 navi.MoveToRoot();
                 navi.MoveToFirstChild();
-                navi.AppendChild("<warp><name>" + warpName + "\"</name><x>" + player.getLocation().X + "</x><y>" + player.getLocation().Y + "</y></warp>");
+                navi.AppendChild("<warp><name>" + warpName + "</name><x>" + player.getLocation().X + "</x><y>" + player.getLocation().Y + "</y></warp>");
                 WriteXML();
                 warplist.Add(warpName, player.getLocation());
                 player.sendMessage("Warp " + warpName + " created.", 255, 0f, 255f, 255f);
