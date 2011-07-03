@@ -123,6 +123,24 @@ namespace Essentials
                             {
 
                             }
+                            else if (commands[1].Equals("list"))
+                            {
+                                if ((commands.Length > 2 && commands[2].Equals("1")) || commands.Length < 3)
+                                {
+                                    warp.List(sendingPlayer, 1);
+                                }
+                                else if (commands.Length > 2)
+                                {
+                                    try
+                                    {
+                                        warp.List(sendingPlayer, Int32.Parse(commands[2]));
+                                    }
+                                    catch (FormatException)
+                                    {
+                                        sendingPlayer.sendMessage("Error: /warp list must be given a number");
+                                    }
+                                }
+                            }
                             else if (commands.Length < 3)
                             {
                                 warp.Warp(sendingPlayer, commands[1]);

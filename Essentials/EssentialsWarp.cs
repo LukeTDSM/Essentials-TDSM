@@ -57,6 +57,7 @@ namespace Essentials
                 reader.Close();
             }
         }
+
         public EssentialsWarp(string file)
         {
             xmlFile = file;
@@ -88,6 +89,31 @@ namespace Essentials
             else
             {
                 player.sendMessage("Error: Warp " + warpName + " does not exist.");
+            }
+        }
+
+        public void List(Player player, int page = 1)
+        {
+            string[] list = new string[warplist.Keys.Count];
+            int startingIndex = (page - 1) * 5;
+            warplist.Keys.CopyTo(list, 0);
+            int maxIndex = list.Length;
+            //if((page * 5) > list.Length)
+            //{
+            //    if(list.Length > (page - 1) * 5)
+            //    {
+            //        startingIndex = (page * 5);
+            //    }
+            //    else
+            //    {
+            //        startingIndex = 0;
+            //    }
+            //}
+            player.sendMessage("Warp List page " + page, 255, 200f, 255f, 255f);
+            page--;
+            for (int i = 0 + (page * 5); i < ((page + 1) * 5 > list.Length ? list.Length : (page * 5) + 5); i++)
+            {
+                player.sendMessage(list[i], 255, 0f, 255f, 255f);
             }
         }
 
