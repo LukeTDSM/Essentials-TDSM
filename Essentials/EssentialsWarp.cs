@@ -13,6 +13,7 @@ namespace Essentials
     public class EssentialsWarp
     {
         public bool enabled;
+        public bool requiresOp;
         public string xmlFile;
         public XmlDocument warpFile;
         //private string warpProps;

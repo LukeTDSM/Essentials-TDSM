@@ -15,8 +15,8 @@ namespace Essentials
 
         public void pushData()
         {
-            setSpawningCancelled(isWarpEnabled());
-            setTileBreakage(getTileBreakage());
+            setWarpEnabled(isWarpEnabled());
+            setRequiresOp(warpRequiresOp());
         }
 
         public bool isWarpEnabled()
@@ -32,27 +32,27 @@ namespace Essentials
             }
         }
 
-        public void setSpawningCancelled(bool WarpEnabled)
+        public void setWarpEnabled(bool WarpEnabled)
         {
             base.setValue("warpEnabled", WarpEnabled.ToString());
         }
 
-        public bool getTileBreakage()
+        public bool warpRequiresOp()
         {
-            string TileBreakage = base.getValue("tilebreakage");
-            if (TileBreakage == null || TileBreakage.Trim().Length < 0)
+            string requiresOp = base.getValue("warpRequiresOp");
+            if (requiresOp == null || requiresOp.Trim().Length < 0)
             {
                 return true;
             }
             else
             {
-                return Boolean.Parse(TileBreakage);
+                return Boolean.Parse(requiresOp);
             }
         }
 
-        public void setTileBreakage(bool TileBreakage)
+        public void setRequiresOp(bool OpRequired)
         {
-            base.setValue("tilebreakage", TileBreakage.ToString());
+            base.setValue("warpRequiresOp", OpRequired.ToString());
         }
     }
 }

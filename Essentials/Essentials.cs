@@ -59,6 +59,7 @@ namespace Essentials
 
             //read properties data
             warp.enabled = properties.isWarpEnabled();
+            warp.requiresOp = properties.warpRequiresOp();
 
             isEnabled = true;
         }
@@ -88,6 +89,12 @@ namespace Essentials
                     if (commands[0].Equals("/warp"))
                     {
                         Player sendingPlayer = Event.getPlayer();
+                        if (warp.requiresOp && !(sendingPlayer.isOp()))
+                        {
+                            sendingPlayer.sendMessage("Error: /warp requires Op status");
+                            Event.setCancelled(true);
+                            return;
+                        }
                         if(warp.enabled)
                         {
                             if (commands.Length < 2)
