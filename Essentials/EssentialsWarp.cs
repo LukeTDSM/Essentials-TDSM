@@ -3,6 +3,8 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
+using System.Xml.XPath;
 
 using Terraria_Server;
 
@@ -11,64 +13,76 @@ namespace Essentials
     public class EssentialsWarp
     {
         public bool enabled;
-        //public XmlDocument warpFile;
+        public string xmlFile;
+        public XmlDocument warpFile;
         //private string warpProps;
-        /////private XmlReader reader;
+        private XmlReader reader;
         ////private bool firstrun = false;
-        //private XPathNavigator navi;
-        ////private XmlReaderSettings rSettings;
+        private XPathNavigator navi;
+        //private XmlReaderSettings rSettings;
         //private XmlTextWriter twriter;
-        //private XmlWriter writer;
-        //private XmlWriterSettings wSettings;
+        private XmlWriter writer;
+        private XmlWriterSettings wSettings;
         private Dictionary<string, Vector2> warplist;
 
         public void SetupWarps()
         {
-            //warpFile = new XmlDocument();
-            //navi = warpFile.CreateNavigator();
-            //wSettings = new XmlWriterSettings();
-            //wSettings.OmitXmlDeclaration = true;
-            //wSettings.Indent = true;
-            //if(!(File.Exists(xmlFile)))
-            //{
-                //FileStream file = File.Create(xmlFile);
-               // TextWriter t = new StreamWriter(xmlFile);
-               // t.WriteLine("<players>\n\n</players>");
-                //t.Close();
-                //writer = XmlWriter.Create(xmlFile);
-                //writer.WriteStartElement("players");
-                //writer.WriteEndElement();
-                //navi.AppendChild("players");
-                //warpFile.WriteTo(writer);
-                //writer.Flush();
-            //}
-            //warpFile.Load(xmlFile);
-            //reader = XmlTextReader.Create(xmlFile);
-            //warpFile.Load(reader);
-            //foreach (XmlElement e in warpFile.SelectNodes("/user"))
-            //{
-
-            //}
-            //reader.Close();
-            //writer = XmlWriter.Create(xmlFile, wSettings);
-            //warpFile.WriteTo(writer);
-            //writer.Flush();          
-            //Program.tConsole.WriteLine("Loading XML file.");
+            warpFile = new XmlDocument();
+            wSettings = new XmlWriterSettings();
+            wSettings.OmitXmlDeclaration = true;
+            wSettings.Indent = true;
+            if (!(File.Exists(xmlFile)))
+            {
+                FileStream file = File.Create(xmlFile);
+                file.Close();
+                warpFile.LoadXml("<warps></warps>");
+                navi = warpFile.CreateNavigator();
+                WriteXML();
+            }
+            else
+            {
+                reader = XmlTextReader.Create(xmlFile);
+                warpFile.Load(reader);
+                navi = warpFile.CreateNavigator();
+                Vector2 loc = new Vector2();
+                string name;
+                foreach (XmlElement e in warpFile.SelectNodes("/warps/warp"))
+                {
+                    name = e.ChildNodes[0].InnerText;
+                    loc.X = float.Parse(e.ChildNodes[1].InnerText);
+                    loc.Y = float.Parse(e.ChildNodes[2].InnerText);
+                    warplist.Add(name, loc);
+                }
+                reader.Close();
+            }
         }
         public EssentialsWarp(string file)
         {
-            //warpProps = file;
+            xmlFile = file;
             warplist = new Dictionary<string, Vector2>();
-            //warps = new WarpProps(file);
-            //SetupWarps();
+            SetupWarps();
         }
 
         public void DelWarp(Player player, string warpName)
         {
             if(warplist.ContainsKey(warpName))
             {
+                XmlNodeList node = warpFile.SelectNodes("/warps");
+                for(int i = 0; i < node.Count; i++)
+                {
+                    for (int j = 0; j < node[i].ChildNodes.Count; j++)
+                    {
+                        if (node[i].ChildNodes[j].FirstChild.InnerText == warpName)
+                        {
+                            node[i].RemoveChild(node[i].ChildNodes[j]);
+                            break;
+                        }
+                    }
+                }
+                WriteXML();
                 warplist.Remove(warpName);
                 player.sendMessage("Warp " + warpName + " removed.", 255, 0f, 255f, 255f);
+                Program.tConsole.WriteLine(player.getName() + " removed warp " + warpName);
             }
             else
             {
@@ -84,6 +98,7 @@ namespace Essentials
                 warplist.TryGetValue(warpName, out warpLoc);
                 player.teleportTo(warpLoc.X, warpLoc.Y);
                 player.sendMessage("Warped to " + warpName + ".", 255, 0f, 255f, 255f);
+                Program.tConsole.WriteLine(player.getName() + " used /warp " + warpName);
             }
             else
             {
@@ -93,10 +108,15 @@ namespace Essentials
         
         public void WriteWarp(Player player, string warpName)
         {
-           if (!warplist.ContainsKey(warpName))
+            if (!warplist.ContainsKey(warpName))
             {
+                navi.MoveToRoot();
+                navi.MoveToFirstChild();
+                navi.AppendChild("<warp><name>" + warpName + "\"</name><x>" + player.getLocation().X + "</x><y>" + player.getLocation().Y + "</y></warp>");
+                WriteXML();
                 warplist.Add(warpName, player.getLocation());
                 player.sendMessage("Warp " + warpName + " created.", 255, 0f, 255f, 255f);
+                Program.tConsole.WriteLine(player.getName() + " created warp " + warpName + " at " + player.getLocation().X + "," + player.getLocation().Y);
             }
             else
             {
@@ -104,14 +124,12 @@ namespace Essentials
             }
         }
 
-        private void WriteWarpXML(Player player, string warpName)
+        private void WriteXML()
         {
-
-        }
-
-        public void CloseXml()
-        {
-            //writer.Close();
+            writer = XmlWriter.Create(xmlFile, wSettings);
+            warpFile.WriteTo(writer);
+            writer.Flush();
+            writer.Close();
         }
 
     }
