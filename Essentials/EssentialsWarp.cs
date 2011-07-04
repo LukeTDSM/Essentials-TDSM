@@ -7,6 +7,7 @@ using System.Xml;
 using System.Xml.XPath;
 
 using Terraria_Server;
+using Terraria_Server.Misc;
 
 namespace Essentials
 {

@@ -2,57 +2,40 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Terraria_Server;
+using Terraria_Server.Misc;
 
 namespace Essentials
 {
     public class Properties : PropertiesFile
     {
-        public Properties(String pFile)
-        {
-            base.setFile(pFile);
-        }
+        private const bool DEFAULT_WARP_ENABLED = true;
+        private const bool DEFAULT_WARP_REQUIRES_OP = true;
+
+        private const string WARP_ENABLED = "warpenabled";
+        private const string WARP_REQUIRES_OP = "warprequiresop";
+
+        public Properties(String propertiesPath) : base(propertiesPath) { }
 
         public void pushData()
         {
-            setWarpEnabled(isWarpEnabled());
-            setRequiresOp(warpRequiresOp());
+            object temp = WarpEnabled;
+            temp = WarpRequiresOp;
         }
 
-        public bool isWarpEnabled()
+        public bool WarpEnabled
         {
-            string WarpEnabled = base.getValue("warpEnabled");
-            if (WarpEnabled == null || WarpEnabled.Trim().Length < 0)
+            get
             {
-                return true;
-            }
-            else
-            {
-                return Boolean.Parse(WarpEnabled);
+                return getValue(WARP_ENABLED, DEFAULT_WARP_ENABLED);
             }
         }
 
-        public void setWarpEnabled(bool WarpEnabled)
+        public bool WarpRequiresOp
         {
-            base.setValue("warpEnabled", WarpEnabled.ToString());
-        }
-
-        public bool warpRequiresOp()
-        {
-            string requiresOp = base.getValue("warpRequiresOp");
-            if (requiresOp == null || requiresOp.Trim().Length < 0)
+            get
             {
-                return true;
+                return getValue(WARP_REQUIRES_OP, DEFAULT_WARP_REQUIRES_OP);
             }
-            else
-            {
-                return Boolean.Parse(requiresOp);
-            }
-        }
-
-        public void setRequiresOp(bool OpRequired)
-        {
-            base.setValue("warpRequiresOp", OpRequired.ToString());
         }
     }
 }

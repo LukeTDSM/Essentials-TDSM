@@ -37,29 +37,25 @@ namespace Essentials
             Name = "Essentials";
             Description = "Essential commands for TDSM.";
             Author = "Essentials";
-            Version = "0.1.5";
-            TDSMBuild = 16;
+            Version = "0.2";
+            TDSMBuild = 19;
 
-            string pluginFolder = Statics.getPluginPath + Statics.systemSeperator + "Essentials";
+            string pluginFolder = Statics.PluginPath + Path.DirectorySeparatorChar + "Essentials";
             //Create folder if it doesn't exist
-            if (!Program.createDirectory(pluginFolder, true))
-            {
-                Program.tConsole.WriteLine("[Essentials] Failed to create crucial Folder");
-                return;
-            }
+            CreateDirectory(pluginFolder);
 
             //setup a new properties file
-            properties = new Properties(pluginFolder + Statics.systemSeperator + "essentials.properties");
+            properties = new Properties(pluginFolder + Path.DirectorySeparatorChar + "essentials.properties");
             properties.Load();
             properties.pushData(); //Creates default values if needed.
             properties.Save();
             
             //setup new Warp
-            warp = new EssentialsWarp(pluginFolder + Statics.systemSeperator + "warps.xml");
+            warp = new EssentialsWarp(pluginFolder + Path.DirectorySeparatorChar + "warps.xml");
 
             //read properties data
-            warp.enabled = properties.isWarpEnabled();
-            warp.requiresOp = properties.warpRequiresOp();
+            warp.enabled = properties.WarpEnabled;
+            warp.requiresOp = properties.WarpRequiresOp;
 
             isEnabled = true;
         }
@@ -81,18 +77,18 @@ namespace Essentials
         public override void onPlayerCommand(PlayerCommandEvent Event)
         {
             if (isEnabled == false) { return; }
-            string[] commands = Event.getMessage().ToLower().Split(' '); //Split into sections (to lower case to work with it better)
+            string[] commands = Event.Message.ToLower().Split(' '); //Split into sections (to lower case to work with it better)
             if (commands.Length > 0)
             {
                 if (commands[0] != null && commands[0].Trim().Length > 0) //If it is not nothing, and the string is actually something
                 {
                     if (commands[0].Equals("/warp"))
                     {
-                        Player sendingPlayer = Event.getPlayer();
-                        if (warp.requiresOp && !(sendingPlayer.isOp()))
+                        Player sendingPlayer = Event.Player;
+                        if (warp.requiresOp && !(sendingPlayer.Op))
                         {
                             sendingPlayer.sendMessage("Error: /warp requires Op status");
-                            Event.setCancelled(true);
+                            Event.Cancelled = true;
                             return;
                         }
                         if(warp.enabled)
@@ -150,19 +146,18 @@ namespace Essentials
                         {
                             sendingPlayer.sendMessage("Error: Warp not enabled");
                         }
-                        Event.setCancelled(true);
+                        Event.Cancelled = true;
                     }
                     else if (commands[0].Equals("/slay"))
                     {
-                        Player sendingPlayer = Event.getPlayer();
-                        if (!sendingPlayer.isOp())
+                        if (!Event.Player.Op)
                         {
-                            sendingPlayer.sendMessage("Error: you must be Op to use /slay");
+                            Event.Player.sendMessage("Error: you must be Op to use /slay");
                             return;
                         }
                         if (commands.Length < 2)
                         {
-                            sendingPlayer.sendMessage("Error: you must specify a player to slay");
+                            Event.Player.sendMessage("Error: you must specify a player to slay");
                         }
                         else
                         {
@@ -170,23 +165,26 @@ namespace Essentials
                             {
                                 Player targetPlayer = Program.server.GetPlayerByName(commands[1]);
                                 NetMessage.SendData(26, -1, -1, " of unknown causes...", targetPlayer.whoAmi, 0, (float)9999, (float)0);
-                                sendingPlayer.sendMessage("OMG!  You killed " + commands[1] + "!", 255, 0f, 255f, 255f);
-                                Program.tConsole.WriteLine("Player " + sendingPlayer.getName() + " used /slay on " + targetPlayer.getName());
+                                Event.Player.sendMessage("OMG!  You killed " + commands[1] + "!", 255, 0f, 255f, 255f);
+                                Program.tConsole.WriteLine("Player " + Event.Player + " used /slay on " + targetPlayer.getName());
                             }
                             catch (NullReferenceException)
                             {
-                                sendingPlayer.sendMessage("Error: Player not online.");
+                                Event.Player.sendMessage("Error: Player not online.");
                             }
                         }
-                        Event.setCancelled(true);
+                        Event.Cancelled = true;
                     }
                 }
             }
         }
 
-        public override void onPlayerJoin(PlayerLoginEvent Event)
+        private static void CreateDirectory(string dirPath)
         {
-            
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
         }
     }
 }
