@@ -27,10 +27,8 @@ namespace Essentials
 
         // tConsole is used for when logging Output to the console & a log file.
 
-        public Properties properties;
-        public bool tileBreakageAllowed = false;
         public bool isEnabled = false;
-        public EssentialsWarp warp;
+        private Dictionary<string, PlayerCommandEvent> lastEventByPlayer;
 
         public override void Load()
         {
@@ -41,6 +39,7 @@ namespace Essentials
             TDSMBuild = 22;
 
             string pluginFolder = Statics.PluginPath + Path.DirectorySeparatorChar + "Essentials";
+            lastEventByPlayer = new Dictionary<string, PlayerCommandEvent>();
             //Create folder if it doesn't exist
             //CreateDirectory(pluginFolder);
 
@@ -79,6 +78,11 @@ namespace Essentials
             isEnabled = false;
         }
 
+        public void Log(string message)
+        {
+            Program.tConsole.WriteLine("[" + base.Name + "] " + message);
+        }
+
         public override void onPlayerCommand(PlayerCommandEvent Event)
         {
             if (isEnabled == false) { return; }
@@ -87,14 +91,41 @@ namespace Essentials
             {
                 if (commands[0] != null && commands[0].Trim().Length > 0) //If it is not nothing, and the string is actually something
                 {
+                    if (commands[0].Equals("/!"))
+                    {
+                        PlayerCommandEvent lastEvent = null;
+                        lastEventByPlayer.TryGetValue(Event.Player.Name, out lastEvent);
+                        if (lastEvent != null)
+                        {
+                            Event.Cancelled = true;
+                            Log("Executing last event: [" + lastEvent.Message + "]");
+                            // send it to the other plugins in case it's a plugin command
+                            Program.server.getPluginManager().processHook(Hooks.PLAYER_COMMAND, lastEvent);
+                            if (lastEvent.Cancelled)
+                            {
+                                return;
+                            }
+                            else
+                            {
+                                Program.commandParser.parsePlayerCommand(Event.Player, lastEvent.Message);
+                            }
+                        }
+                        else
+                        {
+                            Event.Player.sendMessage("Error: no previous command on file");
+                        }
+                    }
+                    else if (commands[0].Substring(0, 1).Equals("/"))
+                    {
+                        lastEventByPlayer[Event.Player.Name] = Event;
+                    }
                     if (commands[0].Equals("/slay"))
                     {
                         if (!Event.Player.Op)
                         {
                             Event.Player.sendMessage("Error: you must be Op to use /slay");
-                            return;
                         }
-                        if (commands.Length < 2)
+                        else if (commands.Length < 2)
                         {
                             Event.Player.sendMessage("Error: you must specify a player to slay");
                         }
@@ -105,7 +136,7 @@ namespace Essentials
                                 Player targetPlayer = Program.server.GetPlayerByName(commands[1]);
                                 NetMessage.SendData(26, -1, -1, " of unknown causes...", targetPlayer.whoAmi, 0, (float)9999, (float)0);
                                 Event.Player.sendMessage("OMG!  You killed " + commands[1] + "!", 255, 0f, 255f, 255f);
-                                Program.tConsole.WriteLine("Player " + Event.Player + " used /slay on " + targetPlayer.getName());
+                                Log("Player " + Event.Player + " used /slay on " + targetPlayer.getName());
                             }
                             catch (NullReferenceException)
                             {
@@ -114,7 +145,6 @@ namespace Essentials
                         }
                         Event.Cancelled = true;
                     }
-
                 }
             }
         }
