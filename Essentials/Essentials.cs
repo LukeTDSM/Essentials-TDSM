@@ -38,24 +38,29 @@ namespace Essentials
             Description = "Essential commands for TDSM.";
             Author = "Essentials";
             Version = "0.2";
-            TDSMBuild = 19;
+            TDSMBuild = 22;
 
             string pluginFolder = Statics.PluginPath + Path.DirectorySeparatorChar + "Essentials";
             //Create folder if it doesn't exist
-            CreateDirectory(pluginFolder);
+            //CreateDirectory(pluginFolder);
 
             //setup a new properties file
-            properties = new Properties(pluginFolder + Path.DirectorySeparatorChar + "essentials.properties");
-            properties.Load();
-            properties.pushData(); //Creates default values if needed.
-            properties.Save();
+            //properties = new Properties(pluginFolder + Path.DirectorySeparatorChar + "essentials.properties");
+            //properties.Load();
+            ////properties.pushData(); //Creates default values if needed.
+            //properties.Save();
             
-            //setup new Warp
-            warp = new EssentialsWarp(pluginFolder + Path.DirectorySeparatorChar + "warps.xml");
+            //delete unnecessary warps.xml
+            if(File.Exists(pluginFolder + Path.DirectorySeparatorChar + "warps.xml"))
+                File.Delete(pluginFolder + Path.DirectorySeparatorChar + "warps.xml");
 
-            //read properties data
-            warp.enabled = properties.WarpEnabled;
-            warp.requiresOp = properties.WarpRequiresOp;
+            //delete unnecessary properties file
+            if (File.Exists(pluginFolder + Path.DirectorySeparatorChar + "essentials.properties"))
+                File.Delete(pluginFolder + Path.DirectorySeparatorChar + "essentials.properties");
+
+            //then delete unnecessary plugin directory
+            if (Directory.Exists(pluginFolder))
+                Directory.Delete(pluginFolder);
 
             isEnabled = true;
         }
@@ -82,73 +87,7 @@ namespace Essentials
             {
                 if (commands[0] != null && commands[0].Trim().Length > 0) //If it is not nothing, and the string is actually something
                 {
-                    if (commands[0].Equals("/warp"))
-                    {
-                        Player sendingPlayer = Event.Player;
-                        if (warp.requiresOp && !(sendingPlayer.Op))
-                        {
-                            sendingPlayer.sendMessage("Error: /warp requires Op status");
-                            Event.Cancelled = true;
-                            return;
-                        }
-                        if(warp.enabled)
-                        {
-                            if (commands.Length < 2)
-                            {
-                                sendingPlayer.sendMessage("For help, type /warp help", 255, 0f, 255f, 255f);
-                            }
-                            else if (commands[1].Equals("+"))
-                            {
-                                if (commands.Length < 3)
-                                    sendingPlayer.sendMessage("Add warp error: format must be /warp + <warpname>");
-                                else
-                                {
-                                    warp.WriteWarp(sendingPlayer, commands[2]);
-                                }
-                            }
-                            else if (commands[1].Equals("-"))
-                            {
-                                if (commands.Length < 3)
-                                    sendingPlayer.sendMessage("Remove warp error: format must be /warp - <warpname>");
-                                else
-                                {
-                                    warp.DelWarp(sendingPlayer, commands[2]);
-                                }
-                            }
-                            else if (commands[1].Equals("help"))
-                            {
-
-                            }
-                            else if (commands[1].Equals("list"))
-                            {
-                                if ((commands.Length > 2 && commands[2].Equals("1")) || commands.Length < 3)
-                                {
-                                    warp.List(sendingPlayer, 1);
-                                }
-                                else if (commands.Length > 2)
-                                {
-                                    try
-                                    {
-                                        warp.List(sendingPlayer, Int32.Parse(commands[2]));
-                                    }
-                                    catch (FormatException)
-                                    {
-                                        sendingPlayer.sendMessage("Error: /warp list must be given a number");
-                                    }
-                                }
-                            }
-                            else if (commands.Length < 3)
-                            {
-                                warp.Warp(sendingPlayer, commands[1]);
-                            }
-                        }
-                        else
-                        {
-                            sendingPlayer.sendMessage("Error: Warp not enabled");
-                        }
-                        Event.Cancelled = true;
-                    }
-                    else if (commands[0].Equals("/slay"))
+                    if (commands[0].Equals("/slay"))
                     {
                         if (!Event.Player.Op)
                         {
@@ -175,6 +114,7 @@ namespace Essentials
                         }
                         Event.Cancelled = true;
                     }
+
                 }
             }
         }
