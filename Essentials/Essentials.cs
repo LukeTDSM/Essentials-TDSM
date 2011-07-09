@@ -36,7 +36,7 @@ namespace Essentials
             Description = "Essential commands for TDSM.";
             Author = "Essentials";
             Version = "0.2";
-            TDSMBuild = 22;
+            TDSMBuild = 24;
 
             string pluginFolder = Statics.PluginPath + Path.DirectorySeparatorChar + "Essentials";
             lastEventByPlayer = new Dictionary<string, PlayerCommandEvent>();
@@ -91,6 +91,7 @@ namespace Essentials
             {
                 if (commands[0] != null && commands[0].Trim().Length > 0) //If it is not nothing, and the string is actually something
                 {
+                	//Last command COMMAND!
                     if (commands[0].Equals("/!"))
                     {
                         PlayerCommandEvent lastEvent = null;
@@ -119,6 +120,8 @@ namespace Essentials
                     {
                         lastEventByPlayer[Event.Player.Name] = Event;
                     }
+                    
+                    //Slay COMMAND
                     if (commands[0].Equals("/slay"))
                     {
                         if (!Event.Player.Op)
@@ -143,11 +146,86 @@ namespace Essentials
                                 Event.Player.sendMessage("Error: Player not online.");
                             }
                         }
-                        Event.Cancelled = true;
                     }
+                        
+                    //GOD COMMAND!
+                    if (commands[0].Equals("/god"))
+                    {
+                    	if (!Event.Player.Op)
+                    	{
+                    		Event.Player.sendMessage("Error: you must be an Op to use /god");
+                    	}
+                    	else
+                    	{
+                        	Event.Player.setGodMode(true);
+                        	Event.Player.sendMessage("You are a GOD!");	
+                    	}
+                        	Event.Cancelled = true;
+                        }
+                    }
+                
+                	//HEAL COMMAND!
+                	if (commands[0].Equals("/heal"))
+                	{
+                		if (!Event.Player.Op)
+                		{
+                			Event.Player.sendMessage("Error: you must be an Op to use /heal");
+                		}
+                		else
+                		{	
+                			Player player = Event.Player;
+                			
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			
+                			Event.Player.sendMessage("You have been healed");
+                		}
+                		
+                		Event.Cancelled = true;
+                	}
+                	
+                	//Ping! Command!
+                	if (commands[0].Equals("/ping"))
+                	{
+                		Event.Player.sendMessage("Pong!");
+                		
+                		Event.Cancelled = true;
+                	}
+                	
+                	//SUICIDE COMMAND!
+                	if (commands[0].Equals("/suicide"))
+                	{
+                		Player Suicide = Event.Player;
+                		if (!Event.Player.Op)
+                		{
+                			Event.Player.sendMessage("Error: you must be Op to use /suicide");
+                		}
+                		else
+                		{
+                			NetMessage.SendData(26, -1, -1, " commited suicide!", Suicide.whoAmi, 0, (float)9999, (float)0);
+                		}
+                	}
+                	
                 }
             }
-        }
 
         private static void CreateDirectory(string dirPath)
         {
