@@ -210,8 +210,6 @@ namespace Essentials
                 	//Ping! Command!
                 	if (commands[0].Equals("/ping"))
                 	{
-                		Event.Player.sendMessage("Pong!");
-                		
                 		Event.Cancelled = true;
                 	}
                 	
