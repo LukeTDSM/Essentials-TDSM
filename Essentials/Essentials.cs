@@ -227,8 +227,47 @@ namespace Essentials
                 		}
                 	}
                 	
-                }
+                	//Kits!
+                	if (commands[0].Equals("/kit"))
+                	{
+                		//Have to be op
+                		if (!Event.Player.Op)
+                		{
+                			Event.Player.sendMessage("Error: you must be Op to use /kit");
+                		}
+                			
+                		//Admin KIT
+                		if (commands[1].Equals("admin"))
+                		{
+                			Event.Player.sendMessage("You have recieved the Admin kit.");
+                		}
+                		
+                		//BUILDER KIT
+                		if (commands[1].Equals("builder"))
+                		{
+                			Event.Player.sendMessage("You have recieved the Builder kit.");
+                		}
+                		
+                		//Mod KIT
+                		if (commands[1].Equals("mod"))
+                		{
+                			Event.Player.sendMessage("You have recieved the Mod kit.");
+                		}
+                		
+                		//Help ::: Shows what kits there are
+                		if (commands[1].Equals("help"))
+                		{
+                			Event.Player.sendMessage("The kits are: admin, builder and mod!");
+                		}
+                		
+                		//Error message
+                		else if (commands.Length < 2)
+                        {
+                            Event.Player.sendMessage("Error: You did not specify a kit!");
+                        }
+                	}
             }
+        }
 
         private static void CreateDirectory(string dirPath)
         {
