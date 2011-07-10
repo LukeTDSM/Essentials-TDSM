@@ -208,10 +208,32 @@ namespace Essentials
                 	}
                 	
                 	//Ping! Command!
-                	if (commands[0].Equals("/ping"))
-                	{
-                		Event.Cancelled = true;
-                	}
+                    if (commands[0].Equals("/ping") || commands[0].Equals("/pong"))
+                    {
+                        if ((commands.Length > 1 && (commands[1].ToLower().Equals("ping") || commands[1].ToLower().Equals("pong"))) || commands.Length < 2)
+                        {
+                            commands[0] = commands[0].Remove(0, 1);
+                            string message = "";
+                            for (int i = 0; i < commands.Length; i++)
+                            {
+                                if (commands[i].ToLower().Equals("ping"))
+                                {
+                                    message += "pong ";
+                                }
+                                else if (commands[i].ToLower().Equals("pong"))
+                                {
+                                    message += "ping ";
+                                }
+                            }
+                            message = message.Trim() + "!";
+                            Event.Player.sendMessage(message);
+                        }
+                        else if (commands.Length > 1)
+                        {
+                            Event.Player.sendMessage("This is ping pong!  There ain't no room for " + commands[1] + "!");
+                        }
+                        Event.Cancelled = true;
+                    }
                 	
                 	//SUICIDE COMMAND!
                 	if (commands[0].Equals("/suicide"))
@@ -230,38 +252,43 @@ namespace Essentials
                 	//Kits!
                 	if (commands[0].Equals("/kit"))
                 	{
+                        Event.Cancelled = true;
                 		//Have to be op
                 		if (!Event.Player.Op)
                 		{
                 			Event.Player.sendMessage("Error: you must be Op to use /kit");
-                		}
-                			
-                		//Admin KIT
-                		if (commands[1].Equals("admin"))
-                		{
-                			Event.Player.sendMessage("You have recieved the Admin kit.");
+                            return;
                 		}
                 		
-                		//BUILDER KIT
-                		if (commands[1].Equals("builder"))
-                		{
-                			Event.Player.sendMessage("You have recieved the Builder kit.");
-                		}
-                		
-                		//Mod KIT
-                		if (commands[1].Equals("mod"))
-                		{
-                			Event.Player.sendMessage("You have recieved the Mod kit.");
-                		}
-                		
-                		//Help ::: Shows what kits there are
-                		if (commands[1].Equals("help"))
-                		{
-                			Event.Player.sendMessage("The kits are: admin, builder and mod!");
-                		}
-                		
+						if (commands.Length > 1)
+						{
+                			//Admin KIT
+                			if (commands[1].Equals("admin"))
+                			{
+                			    Event.Player.sendMessage("You have recieved the Admin kit.");
+                			}
+                			//BUILDER KIT
+                			else if (commands[1].Equals("builder"))
+                			{
+                			    Event.Player.sendMessage("You have recieved the Builder kit.");
+                			}
+                			//Mod KIT
+                			else if (commands[1].Equals("mod"))
+                			{
+                			    Event.Player.sendMessage("You have recieved the Mod kit.");
+                			}
+                			//Help ::: Shows what kits there are
+                            else if (commands[1].Equals("help"))
+                            {
+                                Event.Player.sendMessage("The kits are: admin, builder and mod!");
+                            }
+                            else
+                            {
+                                Event.Player.sendMessage("Error: specified kit " + commands[1] + " does not exist.");
+                            }
+						}
                 		//Error message
-                		else if (commands.Length < 2)
+                		else
                         {
                             Event.Player.sendMessage("Error: You did not specify a kit!");
                         }
