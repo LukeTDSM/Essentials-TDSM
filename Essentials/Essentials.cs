@@ -28,6 +28,7 @@ namespace Essentials
         // tConsole is used for when logging Output to the console & a log file.
 
         public bool isEnabled = false;
+        public int i;
         private Dictionary<string, PlayerCommandEvent> lastEventByPlayer;
 
         public override void Load()
@@ -173,30 +174,16 @@ namespace Essentials
                 		}
                 		else if (commands.Length < 2)
                 		{
+                			
                 			Player player = Event.Player;
                 			
                 			Event.Player.sendMessage("You did not specify the player, so you were healed");
                 			
+                			
+                			for(i = 0; i < 20; i++)
+                			{
                 			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			}
                 		}
                 		else
                 		{ 
@@ -204,26 +191,10 @@ namespace Essentials
                 			{
                 			Player player = Program.server.GetPlayerByName(commands[1]);;
                 			
+                			for(i = 0; i < 20; i++)
+                			{
                 			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                			}
                 			
                 			Event.Player.sendMessage("You have healed that player!");
                 			}
