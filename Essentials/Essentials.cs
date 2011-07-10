@@ -171,7 +171,7 @@ namespace Essentials
                 		{
                 			Event.Player.sendMessage("Error: you must be an Op to use /heal");
                 		}
-                		else if (!commands.Length < 2)
+                		else if (commands.Length < 2)
                 		{
                 			Player player = Event.Player;
                 			
@@ -199,7 +199,9 @@ namespace Essentials
                 			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
                 		}
                 		else
-                		{	
+                		{ 
+                			try
+                			{
                 			Player player = Program.server.GetPlayerByName(commands[1]);;
                 			
                 			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
@@ -224,6 +226,11 @@ namespace Essentials
                 			Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
                 			
                 			Event.Player.sendMessage("You have healed that player!");
+                			}
+                			catch (NullReferenceException)
+                            {
+                                Event.Player.sendMessage("Error: Player not online.");
+                            }
                 		}
                 		
                 		Event.Cancelled = true;
