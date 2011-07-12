@@ -140,7 +140,7 @@ namespace Essentials
                                 Player targetPlayer = Program.server.GetPlayerByName(commands[1]);
                                 NetMessage.SendData(26, -1, -1, " of unknown causes...", targetPlayer.whoAmi, 0, (float)9999, (float)0);
                                 Event.Player.sendMessage("OMG! You killed " + commands[1] + "!", 255, 0f, 255f, 255f);
-                                Log("Player " + Event.Player + " used /slay on " + targetPlayer.getName());
+                                Log("Player " + Event.Player + " used /slay on " + targetPlayer.Name);
                             }
                             catch (NullReferenceException)
                             {
@@ -158,7 +158,6 @@ namespace Essentials
                      }
                      else
                      {
-                         Event.Player.setGodMode(true);
                          Event.Player.sendMessage("You are a GOD!");
                      }
                          Event.Cancelled = true;
@@ -260,38 +259,43 @@ namespace Essentials
                             return;
                  }
                 
-if (commands.Length > 1)
-{
-                 //Admin KIT
-                 if (commands[1].Equals("admin"))
-                 {
-                 Event.Player.sendMessage("You have recieved the Admin kit.");
-                 }
-                 //BUILDER KIT
-                 else if (commands[1].Equals("builder"))
-                 {
-                 Event.Player.sendMessage("You have recieved the Builder kit.");
-                 }
-                 //Mod KIT
-                 else if (commands[1].Equals("mod"))
-                 {
-                 Event.Player.sendMessage("You have recieved the Mod kit.");
-                 }
-                 //Help ::: Shows what kits there are
-                            else if (commands[1].Equals("help"))
-                            {
-                                Event.Player.sendMessage("The kits are: admin, builder and mod!");
-                            }
-                            else
-                            {
-                                Event.Player.sendMessage("Error: specified kit " + commands[1] + " does not exist.");
-                            }
-}
+				if (commands.Length > 1)
+				{
+                 	//Admin KIT
+                 	if (commands[1].Equals("admin"))
+                 	{
+                 	Event.Player.sendMessage("You have recieved the Admin kit.");
+                 	}
+                 	
+                 	//BUILDER KIT
+                 	else if (commands[1].Equals("builder"))
+                 	{
+                 	Event.Player.sendMessage("You have recieved the Builder kit.");
+                 	}
+                 	
+                 	//Mod KIT
+                 	else if (commands[1].Equals("mod"))
+                 	{
+                 	Event.Player.sendMessage("You have recieved the Mod kit.");
+                 	}
+                 	
+                 	//Help ::: Shows what kits there are
+                 	else if (commands[1].Equals("help"))
+                 	{
+                 	Event.Player.sendMessage("The kits are: admin, builder and mod!");
+                 	}
+                 	
+                 	//If kit does not exist
+                 	else
+                 	{
+                  	Event.Player.sendMessage("Error: specified kit " + commands[1] + " does not exist. Please do /kit help");
+                 	}
+				}
                  //Error message
                  else
-                        {
-                            Event.Player.sendMessage("Error: You did not specify a kit!");
-                        }
+                 {
+                            Event.Player.sendMessage("Error: You did not specify a kit! Do /kit help!");
+                 }
                  }
             }
         }
