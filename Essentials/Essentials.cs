@@ -83,7 +83,7 @@ namespace Essentials
         {
             Program.tConsole.WriteLine("[" + base.Name + "] " + message);
         }
-
+        
         public override void onPlayerCommand(PlayerCommandEvent Event)
         {
             if (isEnabled == false) { return; }
@@ -174,9 +174,10 @@ namespace Essentials
                  else if (commands.Length < 2)
                  {
                 
-                 Player player = Event.Player;
+                 
                 
                  Event.Player.sendMessage("You did not specify the player, so you were healed");
+                 Player player = Event.Player;
                 
                 
                  for(i = 0; i < 20; i++)
@@ -247,6 +248,25 @@ namespace Essentials
                  NetMessage.SendData(26, -1, -1, " commited suicide!", Suicide.whoAmi, 0, (float)9999, (float)0);
                  }
                  }
+                 
+                 //Butcher
+                 if (commands[0].Equals("/butcher"))
+                 {
+                 	for (int i = 0; i< Main.npcs.Length-1; i++) 
+                 	{	
+                 		NPC npc = Main.npcs[i];
+                 		Player player = Event.Player;
+                 		int killcount = 0;
+                 		
+                 		if ((npc.Position.X - player.Position.X) / 16 <= 5)
+                 		{
+                 			Main.npcs[i]. StrikeNPC(9999, (float)90f , 0);
+                    		killcount++;
+                 		}
+                 		
+                 		Event.Player.sendMessage("You killed " + killcount + "mobs!", 255, 0f, 255f, 255f);
+                 	}
+                 }
                 
                  //Kits!
                  if (commands[0].Equals("/kit"))
@@ -266,9 +286,8 @@ namespace Essentials
                  	{
                  	Event.Player.sendMessage("You have recieved the Admin kit.");
                  	
-                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                 	Player player = Event.Player;
+                 	
                  	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
                  	}
                  	
@@ -277,9 +296,8 @@ namespace Essentials
                  	{
                  	Event.Player.sendMessage("You have recieved the Builder kit.");
                  	
-                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                 	Player player = Event.Player;
+                 	
                  	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
                  	}
                  	
@@ -288,10 +306,7 @@ namespace Essentials
                  	{
                  	Event.Player.sendMessage("You have recieved the Mod kit.");
                  	
-                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                 	Player player = Event.Player;
                  	}
                  	
                  	//Help ::: Shows what kits there are
@@ -314,7 +329,6 @@ namespace Essentials
                  }
             }
         }
-
         private static void CreateDirectory(string dirPath)
         {
             if (!Directory.Exists(dirPath))
