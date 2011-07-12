@@ -265,18 +265,33 @@ namespace Essentials
                  	if (commands[1].Equals("admin"))
                  	{
                  	Event.Player.sendMessage("You have recieved the Admin kit.");
+                 	
+                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
                  	}
                  	
                  	//BUILDER KIT
                  	else if (commands[1].Equals("builder"))
                  	{
                  	Event.Player.sendMessage("You have recieved the Builder kit.");
+                 	
+                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
                  	}
                  	
                  	//Mod KIT
                  	else if (commands[1].Equals("mod"))
                  	{
                  	Event.Player.sendMessage("You have recieved the Mod kit.");
+                 	
+                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
                  	}
                  	
                  	//Help ::: Shows what kits there are
