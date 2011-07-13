@@ -30,13 +30,14 @@ namespace Essentials
         public bool isEnabled = false;
         public int i;
         private Dictionary<string, PlayerCommandEvent> lastEventByPlayer;
+        public int killcount = 0;
 
         public override void Load()
         {
             Name = "Essentials";
             Description = "Essential commands for TDSM.";
             Author = "Essentials";
-            Version = "0.2";
+            Version = "4.0";
             TDSMBuild = 24;
 
             string pluginFolder = Statics.PluginPath + Path.DirectorySeparatorChar + "Essentials";
@@ -60,7 +61,7 @@ namespace Essentials
 
             //then delete unnecessary plugin directory
             if (Directory.Exists(pluginFolder))
-                Directory.Delete(pluginFolder);
+                Directory.Delete(pluginFolder, true);
 
             isEnabled = true;
         }
@@ -156,9 +157,23 @@ namespace Essentials
                      {
                      Event.Player.sendMessage("Error: you must be an Op to use /god");
                      }
-                     else
+                     
+                     if (commands[1].Equals("off"))
                      {
                          Event.Player.sendMessage("You are a GOD!");
+                         
+ 						 while(true) 
+ 						 {
+ 						 	Player player = Event.Player;
+ 						 	
+ 						 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+    					 }
+                     }
+                     
+                     if (commands[1].Equals("off"))
+                     {
+                     	Event.Player.sendMessage("You are now not a GOD!");
+                     	break;
                      }
                          Event.Cancelled = true;
                         }
@@ -187,18 +202,19 @@ namespace Essentials
                  }
                  else
                  {
+                 	
                  try
                  {
-                 Player player = Program.server.GetPlayerByName(commands[1]);;
+                 	Player player = Program.server.GetPlayerByName(commands[1]);;
                 
-                 for(i = 0; i < 20; i++)
+                 	for(i = 0; i < 20; i++)
                  {
-                 Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
+                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
                  }
                 
-                 Event.Player.sendMessage("You have healed that player!");
+                 	Event.Player.sendMessage("You have healed that player!");
                  }
-                 catch (NullReferenceException)
+                 	catch (NullReferenceException)
                             {
                                 Event.Player.sendMessage("Error: Player not online.");
                             }
@@ -241,31 +257,40 @@ namespace Essentials
                  Player Suicide = Event.Player;
                  if (!Event.Player.Op)
                  {
-                 Event.Player.sendMessage("Error: you must be Op to use /suicide");
+                 	Event.Player.sendMessage("Error: you must be Op to use /suicide");
                  }
                  else
                  {
-                 NetMessage.SendData(26, -1, -1, " commited suicide!", Suicide.whoAmi, 0, (float)9999, (float)0);
+                 	NetMessage.SendData(26, -1, -1, " commited suicide!", Suicide.whoAmi, 0, (float)9999, (float)0);
                  }
                  }
                  
                  //Butcher
                  if (commands[0].Equals("/butcher"))
                  {
+                 	
+                 // if play not op!
+                 if (!Event.Player.Op)
+                 {
+                 	Event.Player.sendMessage("Error: you must be Op to use /butcher");
+                 }
+                 else
+                 {
+                 	//Start code!
                  	for (int i = 0; i< Main.npcs.Length-1; i++) 
                  	{	
                  		NPC npc = Main.npcs[i];
                  		Player player = Event.Player;
-                 		int killcount = 0;
                  		
-                 		if ((npc.Position.X - player.Position.X) / 16 <= 5)
+                 		if ((npc.Position.X - player.Position.X) / 16 <= 7 )
                  		{
-                 			Main.npcs[i]. StrikeNPC(9999, (float)90f , 0);
-                    		killcount++;
+                 			Main.npcs[i].StrikeNPC(npc.lifeMax, (float)90f , 0);
                  		}
-                 		
-                 		Event.Player.sendMessage("You killed " + killcount + "mobs!", 255, 0f, 255f, 255f);
                  	}
+                 }
+                 
+                 Event.Player.sendMessage("You used butcher!", 255, 0f, 255f, 255f);
+                 
                  }
                 
                  //Kits!
