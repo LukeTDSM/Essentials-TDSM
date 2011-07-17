@@ -8,33 +8,33 @@ namespace Essentials
 {
     public class Properties : PropertiesFile
     {
-        private const bool DEFAULT_WARP_ENABLED = true;
-        private const bool DEFAULT_WARP_REQUIRES_OP = true;
+        private const bool DEFAULT_KITS_ENABLED = true;
+        private const bool DEFAULT_KITS_REQUIRES_OP = true;
 
-        private const string WARP_ENABLED = "warpenabled";
-        private const string WARP_REQUIRES_OP = "warprequiresop";
+        private const string KITS_ENABLED = "kitsenabled";
+        private const string KITS_REQUIRES_OP = "kitsrequiresop";
 
         public Properties(String propertiesPath) : base(propertiesPath) { }
 
         public void pushData()
         {
-            object temp = WarpEnabled;
-            temp = WarpRequiresOp;
+            object temp = KitsEnabled;
+            temp = KitsRequiresOp;
         }
 
-        public bool WarpEnabled
+        public bool KitsEnabled
         {
             get
             {
-                return getValue(WARP_ENABLED, DEFAULT_WARP_ENABLED);
+                return getValue(KITS_ENABLED, DEFAULT_KITS_ENABLED);
             }
         }
 
-        public bool WarpRequiresOp
+        public bool KitsRequiresOp
         {
             get
             {
-                return getValue(WARP_REQUIRES_OP, DEFAULT_WARP_REQUIRES_OP);
+                return getValue(KITS_REQUIRES_OP, DEFAULT_KITS_REQUIRES_OP);
             }
         }
     }

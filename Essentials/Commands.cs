@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Terraria_Server;
 using Terraria_Server.Plugin;
+using Essentials.Kit;
 
 namespace Essentials
 {
@@ -171,7 +172,7 @@ namespace Essentials
 
         }
 
-        public static void Kit(Player player, String[] Commands)
+        public static void Kit(Player player, String[] Commands, KitManager kitManager)
         {
             //Have to be op
             if (!player.Op)
@@ -182,33 +183,43 @@ namespace Essentials
 
             if (Commands.Length > 1)
             {
-                //Admin KIT
-                if (Commands[1].Equals("admin"))
+                if (kitManager.ContainsKit(Commands[1]))
                 {
-                    player.sendMessage("You have recieved the Admin kit.");
-                    
-                    Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.Width, player.Height, 58, 1, false);
-                }
+                    Kit.Kit kit = kitManager.getKit(Commands[1]);
+                    if (kit != null && kit.ItemList != null)
+                    {
+                        foreach (int ItemID in kit.ItemList)
+                        {
+                            Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.Width, player.Height, ItemID, 1, false);
+                        }
 
-                //BUILDER KIT
-                else if (Commands[1].Equals("builder"))
-                {
-                    player.sendMessage("You have recieved the Builder kit.");
-                    
-                    Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.Width, player.Height, 58, 1, false);
-                }
-
-                //Mod KIT
-                else if (Commands[1].Equals("mod"))
-                {
-                    player.sendMessage("You have recieved the Mod kit.");
-
+                        player.sendMessage("Recived the '" + kit.Name + "' Kit.");
+                    }
+                    else
+                    {
+                        player.sendMessage("Issue with null kit/list");
+                    }
                 }
 
                 //Help ::: Shows what kits there are
                 else if (Commands[1].Equals("help"))
                 {
-                    player.sendMessage("The kits are: admin, builder and mod!");
+                    String Kits = "";
+                    foreach (Kit.Kit kit in kitManager.KitList)
+                    {
+                        if (kit.Name.Trim().Length > 0)
+                        {
+                            Kits = Kits + ", " + kit.Name;
+                        }
+                    }
+                    if (Kits.StartsWith(","))
+                    {
+                        Kits = Kits.Remove(0, 1).Trim();
+                    }
+                    if (Kits.Length > 0)
+                    {
+                        player.sendMessage("Available Kits: " + Kits);
+                    }
                 }
 
                 //If kit does not exist

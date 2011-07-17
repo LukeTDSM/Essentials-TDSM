@@ -11,6 +11,7 @@ using Terraria_Server.Plugin;
 using Terraria_Server;
 using Terraria_Server.Commands;
 using Terraria_Server.Events;
+using Essentials.Kit;
 
 namespace Essentials
 {
@@ -31,6 +32,7 @@ namespace Essentials
         public int i;
         private Dictionary<String, PlayerCommandEvent> lastEventByPlayer;
         public Properties properties;
+        public KitManager kitManager { get; set; }
 
         public override void Load()
         {
@@ -61,7 +63,24 @@ namespace Essentials
             properties.Load();
             properties.pushData();
             properties.Save();
-                        
+
+            Log("Loading Kits...");
+            kitManager = new KitManager(kitsFile);
+            try
+            {
+                kitManager.LoadKits();
+            }
+            catch (Exception e)
+            {
+                Log(e.Message);
+                Console.Write("Create a parsable file? [Y/n]: ");
+                if (Console.ReadLine().ToLower() == "y")
+                {
+                    kitManager.CreateTemplate();
+                }
+            }
+            Log("Complete, Loaded " + kitManager.KitList.Count + " Kit(s)");
+            
             isEnabled = true;
         }
 
@@ -100,10 +119,6 @@ namespace Essentials
                     if (commands[0].Equals("/!"))
                     {
                         Commands.LastCommand(lastEventByPlayer, Event.Player);
-                    }
-                    else if (commands[0].Substring(0, 1).Equals("/"))
-                    {
-                        lastEventByPlayer[Event.Player.Name] = Event;
                     }
                     
                     //Slay COMMAND
@@ -144,8 +159,16 @@ namespace Essentials
                     //Kits!
                     else if (commands[0].Equals("/kit"))
                     {
-                        Commands.Kit(Event.Player, commands);
-                        Event.Cancelled = true;
+                        if (properties.KitsEnabled)
+                        {
+                            Commands.Kit(Event.Player, commands, kitManager);
+                            Event.Cancelled = true;
+                        }
+                    }
+
+                    if (commands[0].Substring(0, 1).Equals("/"))
+                    {
+                        lastEventByPlayer[Event.Player.Name] = Event;
                     }
                         
                     //GOD COMMAND!
