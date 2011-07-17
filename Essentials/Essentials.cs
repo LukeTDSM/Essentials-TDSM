@@ -17,20 +17,20 @@ namespace Essentials
     public class Essentials : Plugin
     {
         /*
-* @Developers
-*
-* Plugins need to be in .NET 3.5
-* Otherwise TDSM will be unable to load it.
-*
-* As of June 16, 1:15 AM, TDSM should now load Plugins Dynamically.
-*/
+         * @Developers
+         *
+         * Plugins need to be in .NET 3.5
+         * Otherwise TDSM will be unable to load it.
+         *
+         * As of June 16, 1:15 AM, TDSM should now load Plugins Dynamically.
+         */
 
         // tConsole is used for when logging Output to the console & a log file.
 
         public bool isEnabled = false;
         public int i;
-        private Dictionary<string, PlayerCommandEvent> lastEventByPlayer;
-        public int killcount = 0;
+        private Dictionary<String, PlayerCommandEvent> lastEventByPlayer;
+        public Properties properties;
 
         public override void Load()
         {
@@ -38,31 +38,30 @@ namespace Essentials
             Description = "Essential commands for TDSM.";
             Author = "Essentials";
             Version = "4.0";
-            TDSMBuild = 24;
+            TDSMBuild = 26;
 
             string pluginFolder = Statics.PluginPath + Path.DirectorySeparatorChar + "Essentials";
-            lastEventByPlayer = new Dictionary<string, PlayerCommandEvent>();
-            //Create folder if it doesn't exist
-            //CreateDirectory(pluginFolder);
+            string kitsFile = pluginFolder + Path.DirectorySeparatorChar + "kits.xml";
+            string propertiesFile = pluginFolder + Path.DirectorySeparatorChar + "essentials.properties";
 
-            //setup a new properties file
-            //properties = new Properties(pluginFolder + Path.DirectorySeparatorChar + "essentials.properties");
-            //properties.Load();
-            ////properties.pushData(); //Creates default values if needed.
-            //properties.Save();
-            
-            //delete unnecessary warps.xml
-            if(File.Exists(pluginFolder + Path.DirectorySeparatorChar + "warps.xml"))
-                File.Delete(pluginFolder + Path.DirectorySeparatorChar + "warps.xml");
 
-            //delete unnecessary properties file
-            if (File.Exists(pluginFolder + Path.DirectorySeparatorChar + "essentials.properties"))
-                File.Delete(pluginFolder + Path.DirectorySeparatorChar + "essentials.properties");
+            lastEventByPlayer = new Dictionary<String, PlayerCommandEvent>();
 
-            //then delete unnecessary plugin directory
-            if (Directory.Exists(pluginFolder))
-                Directory.Delete(pluginFolder, true);
+            if (!Directory.Exists(pluginFolder))
+                CreateDirectory(pluginFolder); //Touch Directory, Wee need this.
 
+            //We do not want to delete records!
+            if (!File.Exists(kitsFile))
+                File.Create(kitsFile).Close();
+
+            if (!File.Exists(propertiesFile))
+                File.Create(propertiesFile).Close();
+
+            properties = new Properties(pluginFolder + Path.DirectorySeparatorChar + "essentials.properties");
+            properties.Load();
+            properties.pushData();
+            properties.Save();
+                        
             isEnabled = true;
         }
 
@@ -71,7 +70,6 @@ namespace Essentials
             Program.tConsole.WriteLine(base.Name + " enabled.");
             //Register Hooks
             this.registerHook(Hooks.PLAYER_COMMAND);
-            //this.registerHook(Hooks.PLAYER_LOGIN);
         }
 
         public override void Disable()
@@ -80,15 +78,20 @@ namespace Essentials
             isEnabled = false;
         }
 
-        public void Log(string message)
+        public static void Log(String message, String pluginName)
         {
-            Program.tConsole.WriteLine("[" + base.Name + "] " + message);
+            Program.tConsole.WriteLine("[" + pluginName + "] " + message);
+        }
+
+        public void Log(String message)
+        {
+           Log(message, base.Name);
         }
         
         public override void onPlayerCommand(PlayerCommandEvent Event)
         {
             if (isEnabled == false) { return; }
-            string[] commands = Event.Message.ToLower().Split(' '); //Split into sections (to lower case to work with it better)
+            String[] commands = Event.Message.ToLower().Split(' '); //Split into sections (to lower case to work with it better)
             if (commands.Length > 0)
             {
                 if (commands[0] != null && commands[0].Trim().Length > 0) //If it is not nothing, and the string is actually something
@@ -96,27 +99,7 @@ namespace Essentials
                  //Last command COMMAND!
                     if (commands[0].Equals("/!"))
                     {
-                        PlayerCommandEvent lastEvent = null;
-                        lastEventByPlayer.TryGetValue(Event.Player.Name, out lastEvent);
-                        if (lastEvent != null)
-                        {
-                            Event.Cancelled = true;
-                            Log("Executing last event: [" + lastEvent.Message + "]");
-                            // send it to the other plugins in case it's a plugin command
-                            Program.server.getPluginManager().processHook(Hooks.PLAYER_COMMAND, lastEvent);
-                            if (lastEvent.Cancelled)
-                            {
-                                return;
-                            }
-                            else
-                            {
-                                Program.commandParser.parsePlayerCommand(Event.Player, lastEvent.Message);
-                            }
-                        }
-                        else
-                        {
-                            Event.Player.sendMessage("Error: no previous command on file");
-                        }
+                        Commands.LastCommand(lastEventByPlayer, Event.Player);
                     }
                     else if (commands[0].Substring(0, 1).Equals("/"))
                     {
@@ -124,237 +107,73 @@ namespace Essentials
                     }
                     
                     //Slay COMMAND
-                    if (commands[0].Equals("/slay"))
+                    else if (commands[0].Equals("/slay"))
                     {
-                        if (!Event.Player.Op)
-                        {
-                            Event.Player.sendMessage("Error: you must be Op to use /slay");
-                        }
-                        else if (commands.Length < 2)
-                        {
-                            Event.Player.sendMessage("Error: you must specify a player to slay");
-                        }
-                        else
-                        {
-                            try
-                            {
-                                Player targetPlayer = Program.server.GetPlayerByName(commands[1]);
-                                NetMessage.SendData(26, -1, -1, " of unknown causes...", targetPlayer.whoAmi, 0, (float)9999, (float)0);
-                                Event.Player.sendMessage("OMG! You killed " + commands[1] + "!", 255, 0f, 255f, 255f);
-                                Log("Player " + Event.Player + " used /slay on " + targetPlayer.Name);
-                            }
-                            catch (NullReferenceException)
-                            {
-                                Event.Player.sendMessage("Error: Player not online.");
-                            }
-                        }
+                        Commands.Slay(Event.Player, commands);
+                        Event.Cancelled = true;
+                    }
+
+                   //HEAL COMMAND!
+                    else if (commands[0].Equals("/heal"))
+                    {
+                        Commands.HealPlayer(Event.Player, commands);
+                        Event.Cancelled = true;
+                    }
+
+                    //Ping! Command!
+                    else if (commands[0].Equals("/ping") || commands[0].Equals("/pong"))
+                    {
+                        Commands.ConnectionTest(Event.Player, commands);
+                        Event.Cancelled = true;
+                    }
+
+                    //SUICIDE COMMAND!
+                    else if (commands[0].Equals("/suicide"))
+                    {
+                        Commands.Suicide(Event.Player);
+                        Event.Cancelled = true;
+                    }
+
+                    //Butcher
+                    else if (commands[0].Equals("/butcher"))
+                    {
+                        Commands.Butcher(Event.Player, commands);
+                        Event.Cancelled = true;
+                    }
+
+                    //Kits!
+                    else if (commands[0].Equals("/kit"))
+                    {
+                        Commands.Kit(Event.Player, commands);
+                        Event.Cancelled = true;
                     }
                         
                     //GOD COMMAND!
-                    if (commands[0].Equals("/god"))
+                    /*else if (commands[0].Equals("/god"))
                     {
-                     if (!Event.Player.Op)
-                     {
-                     Event.Player.sendMessage("Error: you must be an Op to use /god");
-                     }
-                     
-                     if (commands[1].Equals("off"))
-                     {
-                         Event.Player.sendMessage("You are a GOD!");
-                         
- 						 while(true) 
- 						 {
- 						 	Player player = Event.Player;
- 						 	
- 						 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-    					 }
-                     }
-                     
-                     if (commands[1].Equals("off"))
-                     {
-                     	Event.Player.sendMessage("You are now not a GOD!");
-                     	break;
-                     }
-                         Event.Cancelled = true;
-                        }
-                    }
-                
-                 //HEAL COMMAND!
-                 if (commands[0].Equals("/heal"))
-                 {
-                 if (!Event.Player.Op)
-                 {
-                 Event.Player.sendMessage("Error: you must be an Op to use /heal");
-                 }
-                 else if (commands.Length < 2)
-                 {
-                
-                 
-                
-                 Event.Player.sendMessage("You did not specify the player, so you were healed");
-                 Player player = Event.Player;
-                
-                
-                 for(i = 0; i < 20; i++)
-                 {
-                 Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                 }
-                 }
-                 else
-                 {
-                 	
-                 try
-                 {
-                 	Player player = Program.server.GetPlayerByName(commands[1]);;
-                
-                 	for(i = 0; i < 20; i++)
-                 {
-                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                 }
-                
-                 	Event.Player.sendMessage("You have healed that player!");
-                 }
-                 	catch (NullReferenceException)
-                            {
-                                Event.Player.sendMessage("Error: Player not online.");
-                            }
-                 }
-                
-                 Event.Cancelled = true;
-                 }
-                
-                 //Ping! Command!
-                    if (commands[0].Equals("/ping") || commands[0].Equals("/pong"))
-                    {
-                        if ((commands.Length > 1 && (commands[1].ToLower().Equals("ping") || commands[1].ToLower().Equals("pong"))) || commands.Length < 2)
+                        Needs a thread first.
+                        if (!Event.Player.Op)
                         {
-                            commands[0] = commands[0].Remove(0, 1);
-                            string message = "";
-                            for (int i = 0; i < commands.Length; i++)
-                            {
-                                if (commands[i].ToLower().Equals("ping"))
-                                {
-                                    message += "pong ";
-                                }
-                                else if (commands[i].ToLower().Equals("pong"))
-                                {
-                                    message += "ping ";
-                                }
-                            }
-                            message = message.Trim() + "!";
-                            Event.Player.sendMessage(message);
+                            Event.Player.sendMessage("Error: you must be an Op to use /god");
                         }
-                        else if (commands.Length > 1)
+                        
+                        if (commands[1].Equals("off"))
                         {
-                            Event.Player.sendMessage("This is ping pong! There ain't no room for " + commands[1] + "!");
+                            Event.Player.sendMessage("You are a GOD!");
+                            
+                            while(true) 
+                            {
+                                Player player = Event.Player;
+                                Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.Width, player.Height, 58, 1, false);
+                            }
                         }
+
                         Event.Cancelled = true;
-                    }
-                
-                 //SUICIDE COMMAND!
-                 if (commands[0].Equals("/suicide"))
-                 {
-                 Player Suicide = Event.Player;
-                 if (!Event.Player.Op)
-                 {
-                 	Event.Player.sendMessage("Error: you must be Op to use /suicide");
-                 }
-                 else
-                 {
-                 	NetMessage.SendData(26, -1, -1, " commited suicide!", Suicide.whoAmi, 0, (float)9999, (float)0);
-                 }
-                 }
-                 
-                 //Butcher
-                 if (commands[0].Equals("/butcher"))
-                 {
-                 	
-                 // if play not op!
-                 if (!Event.Player.Op)
-                 {
-                 	Event.Player.sendMessage("Error: you must be Op to use /butcher");
-                 }
-                 else
-                 {
-                 	//Start code!
-                 	for (int i = 0; i< Main.npcs.Length-1; i++) 
-                 	{	
-                 		NPC npc = Main.npcs[i];
-                 		Player player = Event.Player;
-                 		
-                 		if ((npc.Position.X - player.Position.X) / 16 <= 7 )
-                 		{
-                 			Main.npcs[i].StrikeNPC(npc.lifeMax, (float)90f , 0);
-                 		}
-                 	}
-                 }
-                 
-                 Event.Player.sendMessage("You used butcher!", 255, 0f, 255f, 255f);
-                 
-                 }
-                
-                 //Kits!
-                 if (commands[0].Equals("/kit"))
-                 {
-                        Event.Cancelled = true;
-                 //Have to be op
-                 if (!Event.Player.Op)
-                 {
-                 Event.Player.sendMessage("Error: you must be Op to use /kit");
-                            return;
-                 }
-                
-				if (commands.Length > 1)
-				{
-                 	//Admin KIT
-                 	if (commands[1].Equals("admin"))
-                 	{
-                 	Event.Player.sendMessage("You have recieved the Admin kit.");
-                 	
-                 	Player player = Event.Player;
-                 	
-                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                 	}
-                 	
-                 	//BUILDER KIT
-                 	else if (commands[1].Equals("builder"))
-                 	{
-                 	Event.Player.sendMessage("You have recieved the Builder kit.");
-                 	
-                 	Player player = Event.Player;
-                 	
-                 	Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.width, player.height, 58, 1, false);
-                 	}
-                 	
-                 	//Mod KIT
-                 	else if (commands[1].Equals("mod"))
-                 	{
-                 	Event.Player.sendMessage("You have recieved the Mod kit.");
-                 	
-                 	Player player = Event.Player;
-                 	}
-                 	
-                 	//Help ::: Shows what kits there are
-                 	else if (commands[1].Equals("help"))
-                 	{
-                 	Event.Player.sendMessage("The kits are: admin, builder and mod!");
-                 	}
-                 	
-                 	//If kit does not exist
-                 	else
-                 	{
-                  	Event.Player.sendMessage("Error: specified kit " + commands[1] + " does not exist. Please do /kit help");
-                 	}
-				}
-                 //Error message
-                 else
-                 {
-                            Event.Player.sendMessage("Error: You did not specify a kit! Do /kit help!");
-                 }
-                 }
+                    }*/
+                }
             }
         }
-        private static void CreateDirectory(string dirPath)
+        private static void CreateDirectory(String dirPath)
         {
             if (!Directory.Exists(dirPath))
             {
