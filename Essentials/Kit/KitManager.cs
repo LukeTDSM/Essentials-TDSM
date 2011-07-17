@@ -64,9 +64,9 @@ namespace Essentials.Kit
         {
             XmlTextWriter xmlWriter = new XmlTextWriter(kitFileLocation, null);
             xmlWriter.WriteStartDocument();
-            //Add a template warp
+            //Add a template kit
             xmlWriter.WriteStartElement("kits"); //Parent
-            xmlWriter.WriteStartElement("kit"); //Actual warp data
+            xmlWriter.WriteStartElement("kit"); //Actual kit data
 
                 xmlWriter.WriteStartElement("name");
                 xmlWriter.WriteString("admins");
