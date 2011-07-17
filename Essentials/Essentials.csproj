@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands.cs" />
+    <Compile Include="God\GodMode.cs" />
     <Compile Include="Kit\Kit.cs" />
     <Compile Include="Kit\KitManager.cs" />
     <Compile Include="Properties.cs" />

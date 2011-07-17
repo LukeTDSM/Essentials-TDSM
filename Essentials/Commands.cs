@@ -234,5 +234,38 @@ namespace Essentials
                 player.sendMessage("Error: You did not specify a kit! Do /kit help!");
             }
         }
+
+        public static void GodMode(Player player, Dictionary<Int32, Boolean> playerList)
+        {
+            if (!player.Op)
+            {
+                player.sendMessage("Error: you must be Op to use God Mode");
+                return;
+            }
+            
+            bool found = false;
+            bool godModeStatus = false;
+            for (int i = 0; i < playerList.Count; i++ )
+            {
+                int PlayerID = playerList.Keys.ElementAt(i);
+                Player eplayer = Main.players[PlayerID];
+                if (eplayer.Name.Equals(player.Name))
+                {
+                    bool GodMode = !playerList.Values.ElementAt(i);
+                    playerList.Remove(PlayerID);
+                    playerList.Add(PlayerID, GodMode);
+                    godModeStatus = GodMode;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                godModeStatus = true;
+                playerList.Add(player.whoAmi, godModeStatus);
+            }
+            
+            player.sendMessage("God Mode Status: " + godModeStatus.ToString());
+        }
     }
 }

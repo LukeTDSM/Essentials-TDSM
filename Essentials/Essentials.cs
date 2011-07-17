@@ -33,6 +33,7 @@ namespace Essentials
         private Dictionary<String, PlayerCommandEvent> lastEventByPlayer;
         public Properties properties;
         public KitManager kitManager { get; set; }
+        public Dictionary<int, bool> essentialsPlayerList; //int - player ID, bool - god mode
 
         public override void Load()
         {
@@ -45,9 +46,9 @@ namespace Essentials
             string pluginFolder = Statics.PluginPath + Path.DirectorySeparatorChar + "Essentials";
             string kitsFile = pluginFolder + Path.DirectorySeparatorChar + "kits.xml";
             string propertiesFile = pluginFolder + Path.DirectorySeparatorChar + "essentials.properties";
-
-
+            
             lastEventByPlayer = new Dictionary<String, PlayerCommandEvent>();
+            essentialsPlayerList = new Dictionary<int, bool>();
 
             if (!Directory.Exists(pluginFolder))
                 CreateDirectory(pluginFolder); //Touch Directory, Wee need this.
@@ -88,6 +89,7 @@ namespace Essentials
         {
             Program.tConsole.WriteLine(base.Name + " enabled.");
             //Register Hooks
+            new God.GodMode(this);
             this.registerHook(Hooks.PLAYER_COMMAND);
         }
 
@@ -162,6 +164,16 @@ namespace Essentials
                         if (properties.KitsEnabled)
                         {
                             Commands.Kit(Event.Player, commands, kitManager);
+                            Event.Cancelled = true;
+                        }
+                    }
+
+                    //God Mode!
+                    else if (commands[0].Equals("/god"))
+                    {
+                        if (properties.KitsEnabled)
+                        {
+                            Commands.GodMode(Event.Player, essentialsPlayerList);
                             Event.Cancelled = true;
                         }
                     }

@@ -81,7 +81,6 @@ namespace Essentials.Kit
                 xmlWriter.WriteEndElement();
 
             xmlWriter.WriteEndElement();
-
             xmlWriter.WriteStartElement("kit");
 
                 xmlWriter.WriteStartElement("name");
