@@ -82,7 +82,7 @@ namespace Essentials.Kit
 
             xmlWriter.WriteEndElement();
 
-            xmlWriter.WriteStartElement("kit"); //Actual warp data
+            xmlWriter.WriteStartElement("kit");
 
                 xmlWriter.WriteStartElement("name");
                 xmlWriter.WriteString("builder");
@@ -97,7 +97,7 @@ namespace Essentials.Kit
                 xmlWriter.WriteEndElement();
 
             xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement("kit"); //Actual warp data
+            xmlWriter.WriteStartElement("kit");
 
                 xmlWriter.WriteStartElement("name");
                 xmlWriter.WriteString("mod");
