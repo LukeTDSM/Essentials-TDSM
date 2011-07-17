@@ -26,12 +26,15 @@ namespace Essentials.God
                 for (int i = 0; i < plugin.essentialsPlayerList.Count; i++)
                 {
                     Player eplayer = Main.players[plugin.essentialsPlayerList.Keys.ElementAt(i)];
-                    if (plugin.essentialsPlayerList.Values.ElementAt(i))
+                    if (eplayer.statLife != eplayer.statLifeMax)
                     {
-                        Item.NewItem((int)eplayer.Position.X, (int)eplayer.Position.Y, eplayer.Width, eplayer.Height, 58, 1, false);
+                        if (plugin.essentialsPlayerList.Values.ElementAt(i))
+                        {
+                            Item.NewItem((int)eplayer.Position.X, (int)eplayer.Position.Y, eplayer.Width, eplayer.Height, 58, 1, false);
+                        }
                     }
                 }
-                Thread.Sleep(2 * 1000);
+                Thread.Sleep(1 * 1000);
             }
         }
     }
