@@ -154,7 +154,9 @@ namespace Essentials
                         //Not a value, Keep at default radius
                     }
                 }
+
                 //Start code!
+
                 int killCount = 0;
                 for (int i = 0; i < Main.npcs.Length - 1; i++)
                 {
