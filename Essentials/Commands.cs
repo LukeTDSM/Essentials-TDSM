@@ -162,8 +162,10 @@ namespace Essentials
                     if (((npc.Position.X - player.Position.X) / 16 <= Radius) ||
                         (npc.Position.Y - player.Position.Y) / 16 <= Radius)
                     {
-                        Main.npcs[i].StrikeNPC(npc.lifeMax, (float)90f, 0);
-                        killCount++;
+                        if (Main.npcs[i].StrikeNPC(npc.lifeMax, (float)90f, 0) > 0.0)
+                        {
+                            killCount++;
+                        }
                     }
                 }
 
