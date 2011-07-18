@@ -156,7 +156,6 @@ namespace Essentials
                 }
 
                 //Start code!
-
                 int killCount = 0;
                 for (int i = 0; i < Main.npcs.Length - 1; i++)
                 {
@@ -271,5 +270,12 @@ namespace Essentials
             
             player.sendMessage("God Mode Status: " + godModeStatus.ToString());
         }
+
+        public static void Spawn(Player player)
+        {
+            player.teleportTo(Main.spawnTileX, Main.spawnTileY);
+            player.sendMessage("Ypu have been Teleported to Spawn");
+        }
+    
     }
 }

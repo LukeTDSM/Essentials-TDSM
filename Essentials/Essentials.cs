@@ -118,96 +118,73 @@ namespace Essentials
             String[] commands = Event.Message.ToLower().Split(' '); //Split into sections (to lower case to work with it better)
             if (commands.Length > 0)
             {
-                if (commands[0] != null && commands[0].Trim().Length > 0) //If it is not nothing, and the string is actually something
+                if (commands[0] != null && commands[0].Trim().Length > 0 && commands[0].Substring(0, 1).Equals("/")) //If it is not nothing, and the string is actually something
                 {
-                 //Last command COMMAND!
-                    if (commands[0].Equals("/!"))
+                    switch (commands[0].Remove(0, 1)) //Remove '/' from command
                     {
-                        Commands.LastCommand(lastEventByPlayer, Event.Player);
+                        case "!": //Last Command
+                            {
+                                Commands.LastCommand(lastEventByPlayer, Event.Player);
+                                break;
+                            }
+                        case "slay":
+                            {
+                                Commands.Slay(Event.Player, commands);
+                                Event.Cancelled = true;
+                                break;
+                            }
+                        case "heal":
+                            {
+                                Commands.HealPlayer(Event.Player, commands);
+                                Event.Cancelled = true;
+                                break;
+                            }
+                        case "ping":
+                            {
+                                Commands.ConnectionTest(Event.Player, commands);
+                                Event.Cancelled = true;
+                                break;
+                            }
+                        case "pong":
+                            {
+                                goto case "ping";
+                            }
+                        case "suicide":
+                            {
+                                Commands.Suicide(Event.Player);
+                                Event.Cancelled = true;
+                                break;
+                            }
+                        case "butcher":
+                            {
+                                Commands.Butcher(Event.Player, commands);
+                                Event.Cancelled = true;
+                                break;
+                            }
+                        case "kit":
+                            {
+                                if (properties.KitsEnabled)
+                                {
+                                    Commands.Kit(Event.Player, commands, kitManager);
+                                    Event.Cancelled = true;
+                                }
+                                break;
+                            }
+                        case "god":
+                            {
+                                Commands.GodMode(Event.Player, essentialsPlayerList);
+                                Event.Cancelled = true;
+                                break;
+                            }
+                        case "spawn":
+                            {
+                                Commands.Spawn(Event.Player);
+                                Event.Cancelled = true;
+                                break;
+                            }
                     }
                     
-                    //Slay COMMAND
-                    else if (commands[0].Equals("/slay"))
-                    {
-                        Commands.Slay(Event.Player, commands);
-                        Event.Cancelled = true;
-                    }
-
-                   //HEAL COMMAND!
-                    else if (commands[0].Equals("/heal"))
-                    {
-                        Commands.HealPlayer(Event.Player, commands);
-                        Event.Cancelled = true;
-                    }
-
-                    //Ping! Command!
-                    else if (commands[0].Equals("/ping") || commands[0].Equals("/pong"))
-                    {
-                        Commands.ConnectionTest(Event.Player, commands);
-                        Event.Cancelled = true;
-                    }
-
-                    //SUICIDE COMMAND!
-                    else if (commands[0].Equals("/suicide"))
-                    {
-                        Commands.Suicide(Event.Player);
-                        Event.Cancelled = true;
-                    }
-
-                    //Butcher
-                    else if (commands[0].Equals("/butcher"))
-                    {
-                        Commands.Butcher(Event.Player, commands);
-                        Event.Cancelled = true;
-                    }
-
-                    //Kits!
-                    else if (commands[0].Equals("/kit"))
-                    {
-                        if (properties.KitsEnabled)
-                        {
-                            Commands.Kit(Event.Player, commands, kitManager);
-                            Event.Cancelled = true;
-                        }
-                    }
-
-                    //God Mode!
-                    else if (commands[0].Equals("/god"))
-                    {
-                        if (properties.KitsEnabled)
-                        {
-                            Commands.GodMode(Event.Player, essentialsPlayerList);
-                            Event.Cancelled = true;
-                        }
-                    }
-
-                    if (commands[0].Substring(0, 1).Equals("/"))
-                    {
-                        lastEventByPlayer[Event.Player.Name] = Event;
-                    }
-                        
-                    //GOD COMMAND!
-                    /*else if (commands[0].Equals("/god"))
-                    {
-                        Needs a thread first.
-                        if (!Event.Player.Op)
-                        {
-                            Event.Player.sendMessage("Error: you must be an Op to use /god");
-                        }
-                        
-                        if (commands[1].Equals("off"))
-                        {
-                            Event.Player.sendMessage("You are a GOD!");
-                            
-                            while(true) 
-                            {
-                                Player player = Event.Player;
-                                Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.Width, player.Height, 58, 1, false);
-                            }
-                        }
-
-                        Event.Cancelled = true;
-                    }*/
+                    lastEventByPlayer[Event.Player.Name] = Event; //Register last command
                 }
             }
         }
