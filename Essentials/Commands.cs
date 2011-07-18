@@ -19,7 +19,7 @@ namespace Essentials
             else if (Commands.Length < 2)
             {
                 player.sendMessage("You did not specify the player, so you were healed");
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < player.statLifeMax - player.statLife; i++)
                 {
                     Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.Width, player.Height, 58, 1, false);
                 }
@@ -29,7 +29,7 @@ namespace Essentials
                 try
                 {
                     Player targetPlayer = Program.server.GetPlayerByName(Commands[1]);
-                    for (int i = 0; i < 20; i++)
+                    for (int i = 0; i < targetPlayer.statLifeMax - targetPlayer.statLife; i++)
                     {
                         Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.Width, player.Height, 58, 1, false);
                     }
