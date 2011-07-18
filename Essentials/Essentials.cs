@@ -67,9 +67,11 @@ namespace Essentials
 
             Log("Loading Kits...");
             kitManager = new KitManager(kitsFile);
+
+        LOADKITS:
             try
             {
-                kitManager.LoadKits();
+                    kitManager.LoadKits();
             }
             catch (Exception e)
             {
@@ -78,6 +80,7 @@ namespace Essentials
                 if (Console.ReadLine().ToLower() == "y")
                 {
                     kitManager.CreateTemplate();
+                    goto LOADKITS; //Go back to reload data ;)...Im lazy I KNOW
                 }
             }
             Log("Complete, Loaded " + kitManager.KitList.Count + " Kit(s)");
