@@ -369,7 +369,7 @@ namespace Essentials
                         {
                             if (!player.Op)
                             {
-                                player.sendMessage("Error: you must be Op to use God Mode");
+                                player.sendMessage("Error: you must be Op to use feature.");
                                 return;
                             }
                             if (!(Commands.Length > 1 && Commands[2] != null && Commands[1].Trim().Length > 0))
@@ -417,7 +417,7 @@ namespace Essentials
                         {
                             if (!player.Op)
                             {
-                                player.sendMessage("Error: you must be Op to use God Mode");
+                                player.sendMessage("Error: you must be Op to use this feature.");
                                 return;
                             }
                             if (!(Commands.Length > 1 && Commands[2] != null && Commands[1].Trim().Length > 0))
