@@ -182,6 +182,12 @@ namespace Essentials
                                 Event.Cancelled = true;
                                 break;
                             }
+                        case "info":
+                            {
+                                Commands.Info(Event.Player);
+                                Event.Cancelled = true;
+                                break;
+                            }
                     }
                     
                     lastEventByPlayer[Event.Player.Name] = Event; //Register last command

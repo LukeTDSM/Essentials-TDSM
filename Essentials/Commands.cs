@@ -274,8 +274,26 @@ namespace Essentials
         public static void Spawn(Player player)
         {
             player.teleportTo(Main.spawnTileX, Main.spawnTileY);
-            player.sendMessage("Ypu have been Teleported to Spawn");
+            player.sendMessage("You have been Teleported to Spawn");
         }
-    
+
+        public static void Info(Player player)
+        {
+            player.sendMessage("Essentials Plugin for TDSM b" + Statics.BUILD, 255, 160f, 32f, 240f);
+            String Platform = Terraria_Server.Definitions.Platform.Type.ToString();
+            switch (Terraria_Server.Definitions.Platform.Type)
+            {
+                case Terraria_Server.Definitions.Platform.PlatformType.LINUX:
+                    Platform = "Linux";
+                    break;
+                case Terraria_Server.Definitions.Platform.PlatformType.MAC:
+                    Platform = "Mac";
+                    break;
+                case Terraria_Server.Definitions.Platform.PlatformType.WINDOWS:
+                    Platform = "Windows";
+                    break;
+            }
+            player.sendMessage("The current OS running this sever is: " + Platform, 255, 160f, 32f, 240f);
+        }
     }
 }
