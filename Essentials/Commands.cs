@@ -295,5 +295,87 @@ namespace Essentials
             }
             player.sendMessage("The current OS running this sever is: " + Platform, 255, 160f, 32f, 240f);
         }
+
+        public static void Plugins(Player player, String[] Commands)
+        {
+            /*
+             * Commands:
+             *      list - shows all loaded plugins
+             *      info - shows a plugin's author & description etc
+             *      [todo] enable/disable
+             */
+            if (Commands.Length > 1 && Commands[1] != null && Commands[1].Trim().Length > 0)
+            {
+                String command = Commands[1].Trim();
+                switch (command)
+                {
+                    case "list":
+                        {
+                            String plugins = "None."; //If no plugins
+                            if (Program.server.PluginManager.PluginList.Count > 0)
+                            {
+                                plugins = "";
+
+                                foreach (Plugin plugin in Program.server.PluginManager.PluginList.Values)
+                                {
+                                    if (plugin.Name.Trim().Length > 0)
+                                    {
+                                        plugins = ", " + plugin.Name.Trim() + " " + ((!plugin.Enabled) ? "[DISABLED]" : ""); //, Plugin1, Plugin2
+                                    }
+                                }
+                                if (plugins.StartsWith(","))
+                                {
+                                    plugins = plugins.Remove(0, 1).Trim(); //Plugin1, Plugin2 {Remove the ', ' from the start and trim the ends}
+                                }
+                            }
+
+                            player.sendMessage("Loaded Plugins: " + plugins + ".");
+                            break;
+                        }
+                    case "info":
+                        {
+                            if (!(Commands.Length > 1 && Commands[2] != null && Commands[1].Trim().Length > 0))
+                            {
+                                player.sendMessage("Please review your argument count.");
+                            }
+
+                            if (Program.server.PluginManager.PluginList.Count > 0)
+                            {
+                                Plugin fplugin = null;
+                                foreach (Plugin plugin in Program.server.PluginManager.PluginList.Values)
+                                {
+                                    if (plugin.Name.Replace(" ", "").Trim() == Commands[2].Trim()) //Commands are already split
+                                    {
+                                        fplugin = plugin;
+                                    }
+                                }
+
+                                if (fplugin != null)
+                                {
+                                    player.sendMessage("Plugin Name: " + fplugin.Name);
+                                    player.sendMessage("Plugin Author: " + fplugin.Author);
+                                    player.sendMessage("Plugin Description: " + fplugin.Description);
+                                    player.sendMessage("Plugin Enabled: " + fplugin.Enabled.ToString());
+                                }
+                                else
+                                {
+                                    player.sendMessage("Sorry, That Plugin was not found. (" + Commands[2] + ")");
+                                }
+                            }
+                            else
+                            {
+                                player.sendMessage("Sorry, There are no Plugins Loaded.");
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            player.sendMessage("Please review the usage of this function");
+                            break;
+                        }
+                }
+            }
+        }
+    
     }
 }

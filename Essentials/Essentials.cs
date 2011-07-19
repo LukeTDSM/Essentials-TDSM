@@ -41,7 +41,7 @@ namespace Essentials
             Description = "Essential commands for TDSM.";
             Author = "Essentials";
             Version = "4.0";
-            TDSMBuild = 26;
+            TDSMBuild = 27;
 
             string pluginFolder = Statics.PluginPath + Path.DirectorySeparatorChar + "Essentials";
             string kitsFile = pluginFolder + Path.DirectorySeparatorChar + "kits.xml";
@@ -185,6 +185,12 @@ namespace Essentials
                         case "info":
                             {
                                 Commands.Info(Event.Player);
+                                Event.Cancelled = true;
+                                break;
+                            }
+                        case "plugins":
+                            {
+                                Commands.Plugins(Event.Player, commands);
                                 Event.Cancelled = true;
                                 break;
                             }
