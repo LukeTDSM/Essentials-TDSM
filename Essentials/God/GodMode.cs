@@ -11,10 +11,12 @@ namespace Essentials.God
     {
         Essentials plugin;
         public Thread godThread;
+        int secondRotation;
 
         public GodMode(Essentials Plugin)
         {
             plugin = Plugin;
+            secondRotation = plugin.properties.GodModeRotation;
             godThread = new Thread(this.Run);
             godThread.Start();
         }
@@ -34,7 +36,7 @@ namespace Essentials.God
                         }
                     }
                 }
-                Thread.Sleep(1 * 1000);
+                Thread.Sleep(secondRotation * 1000);
             }
         }
     }

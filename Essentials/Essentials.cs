@@ -39,8 +39,8 @@ namespace Essentials
         {
             Name = "Essentials";
             Description = "Essential commands for TDSM.";
-            Author = "Essentials";
-            Version = "4.0";
+            Author = "Luke";
+            Version = "0.5";
             TDSMBuild = 27;
 
             string pluginFolder = Statics.PluginPath + Path.DirectorySeparatorChar + "Essentials";

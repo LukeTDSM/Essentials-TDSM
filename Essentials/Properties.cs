@@ -10,9 +10,11 @@ namespace Essentials
     {
         private const bool DEFAULT_KITS_ENABLED = true;
         private const bool DEFAULT_KITS_REQUIRES_OP = true;
+        private const int DEFAULT_GOD_ROTATION = 1;
 
         private const string KITS_ENABLED = "kitsenabled";
         private const string KITS_REQUIRES_OP = "kitsrequiresop";
+        private const string GOD_ROTATION = "godmode-rotation";
 
         public Properties(String propertiesPath) : base(propertiesPath) { }
 
@@ -35,6 +37,14 @@ namespace Essentials
             get
             {
                 return getValue(KITS_REQUIRES_OP, DEFAULT_KITS_REQUIRES_OP);
+            }
+        }
+
+        public int GodModeRotation
+        {
+            get
+            {
+                return getValue(GOD_ROTATION, DEFAULT_GOD_ROTATION);
             }
         }
     }

@@ -300,9 +300,10 @@ namespace Essentials
         {
             /*
              * Commands:
-             *      list - shows all loaded plugins
-             *      info - shows a plugin's author & description etc
-             *      [todo] enable/disable
+             *      list    - shows all loaded plugins
+             *      info    - shows a plugin's author & description etc
+             *      disable - disables a plugin
+             *      enable  - enables a plugin
              */
             if (Commands.Length > 1 && Commands[1] != null && Commands[1].Trim().Length > 0)
             {
@@ -339,23 +340,105 @@ namespace Essentials
                                 player.sendMessage("Please review your argument count.");
                             }
 
+                            //Get plugin Name
+                            String pluginName = Terraria_Server.Commands.Commands.MergeStringArray(Commands);
+                            pluginName = pluginName.Remove(0, pluginName.IndexOf(Commands[2]) + Commands[2].Length).Trim();
+
                             if (Program.server.PluginManager.PluginList.Count > 0)
                             {
-                                Plugin fplugin = null;
-                                foreach (Plugin plugin in Program.server.PluginManager.PluginList.Values)
-                                {
-                                    if (plugin.Name.Replace(" ", "").Trim() == Commands[2].Trim()) //Commands are already split
-                                    {
-                                        fplugin = plugin;
-                                    }
-                                }
-
+                                Plugin fplugin = Program.server.PluginManager.getPlugin(pluginName);
                                 if (fplugin != null)
                                 {
                                     player.sendMessage("Plugin Name: " + fplugin.Name);
                                     player.sendMessage("Plugin Author: " + fplugin.Author);
                                     player.sendMessage("Plugin Description: " + fplugin.Description);
                                     player.sendMessage("Plugin Enabled: " + fplugin.Enabled.ToString());
+                                }
+                                else
+                                {
+                                    player.sendMessage("Sorry, That Plugin was not found. (" + Commands[2] + ")");
+                                }
+                            }
+                            else
+                            {
+                                player.sendMessage("Sorry, There are no Plugins Loaded.");
+                            }
+                            break;
+                        }
+                    case "disable":
+                        {
+                            if (!(Commands.Length > 1 && Commands[2] != null && Commands[1].Trim().Length > 0))
+                            {
+                                player.sendMessage("Please review your argument count.");
+                            }
+
+                            //Get plugin Name
+                            String pluginName = Terraria_Server.Commands.Commands.MergeStringArray(Commands);
+                            pluginName = pluginName.Remove(0, pluginName.IndexOf(Commands[2]) + Commands[2].Length).Trim();
+
+                            if (Program.server.PluginManager.PluginList.Count > 0)
+                            {
+                                Plugin fplugin = Program.server.PluginManager.getPlugin(pluginName);
+                                if (fplugin != null)
+                                {
+                                    if (fplugin.Enabled)
+                                    {
+                                        if (Program.server.PluginManager.DisablePlugin(fplugin.Name))
+                                        {
+                                            player.sendMessage(Commands[2] + " was Disabled!");
+                                        }
+                                        else
+                                        {
+                                            player.sendMessage("Sorry, here was an issue Disabling that plugin. (" + Commands[2] + ")");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        player.sendMessage("Sorry, That Plugin is already Disabled. (" + Commands[2] + ")");
+                                    }
+                                }
+                                else
+                                {
+                                    player.sendMessage("Sorry, That Plugin was not found. (" + Commands[2] + ")");
+                                }
+                            }
+                            else
+                            {
+                                player.sendMessage("Sorry, There are no Plugins Loaded.");
+                            }
+                            break;
+                        }
+                    case "enable":
+                        {
+                            if (!(Commands.Length > 1 && Commands[2] != null && Commands[1].Trim().Length > 0))
+                            {
+                                player.sendMessage("Please review your argument count.");
+                            }
+
+                            //Get plugin Name
+                            String pluginName = Terraria_Server.Commands.Commands.MergeStringArray(Commands);
+                            pluginName = pluginName.Remove(0, pluginName.IndexOf(Commands[2]) + Commands[2].Length).Trim();
+
+                            if (Program.server.PluginManager.PluginList.Count > 0)
+                            {
+                                Plugin fplugin = Program.server.PluginManager.getPlugin(pluginName);
+                                if (fplugin != null)
+                                {
+                                    if (!fplugin.Enabled)
+                                    {
+                                        if (Program.server.PluginManager.EnablePlugin(fplugin.Name))
+                                        {
+                                            player.sendMessage(Commands[2] + " was Enabled!");
+                                        }
+                                        else
+                                        {
+                                            player.sendMessage("Sorry, here was an issue Enabling that plugin. (" + Commands[2] + ")");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        player.sendMessage("Sorry, That Plugin is already Enabled. (" + Commands[2] + ")");
+                                    }
                                 }
                                 else
                                 {
