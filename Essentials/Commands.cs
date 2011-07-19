@@ -342,7 +342,7 @@ namespace Essentials
 
                             //Get plugin Name
                             String pluginName = Terraria_Server.Commands.Commands.MergeStringArray(Commands);
-                            pluginName = pluginName.Remove(0, pluginName.IndexOf(Commands[2]) + Commands[2].Length).Trim();
+                            pluginName = pluginName.Remove(0, pluginName.IndexOf(Commands[2])).Trim();
 
                             if (Program.server.PluginManager.PluginList.Count > 0)
                             {
@@ -374,7 +374,7 @@ namespace Essentials
 
                             //Get plugin Name
                             String pluginName = Terraria_Server.Commands.Commands.MergeStringArray(Commands);
-                            pluginName = pluginName.Remove(0, pluginName.IndexOf(Commands[2]) + Commands[2].Length).Trim();
+                            pluginName = pluginName.Remove(0, pluginName.IndexOf(Commands[2])).Trim();
 
                             if (Program.server.PluginManager.PluginList.Count > 0)
                             {
@@ -417,7 +417,7 @@ namespace Essentials
 
                             //Get plugin Name
                             String pluginName = Terraria_Server.Commands.Commands.MergeStringArray(Commands);
-                            pluginName = pluginName.Remove(0, pluginName.IndexOf(Commands[2]) + Commands[2].Length).Trim();
+                            pluginName = pluginName.Remove(0, pluginName.IndexOf(Commands[2])).Trim();
 
                             if (Program.server.PluginManager.PluginList.Count > 0)
                             {

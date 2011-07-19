@@ -22,6 +22,7 @@ namespace Essentials
         {
             object temp = KitsEnabled;
             temp = KitsRequiresOp;
+            temp = GodModeRotation;
         }
 
         public bool KitsEnabled
