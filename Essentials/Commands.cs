@@ -367,6 +367,11 @@ namespace Essentials
                         }
                     case "disable":
                         {
+                            if (!player.Op)
+                            {
+                                player.sendMessage("Error: you must be Op to use God Mode");
+                                return;
+                            }
                             if (!(Commands.Length > 1 && Commands[2] != null && Commands[1].Trim().Length > 0))
                             {
                                 player.sendMessage("Please review your argument count.");
@@ -410,6 +415,11 @@ namespace Essentials
                         }
                     case "enable":
                         {
+                            if (!player.Op)
+                            {
+                                player.sendMessage("Error: you must be Op to use God Mode");
+                                return;
+                            }
                             if (!(Commands.Length > 1 && Commands[2] != null && Commands[1].Trim().Length > 0))
                             {
                                 player.sendMessage("Please review your argument count.");

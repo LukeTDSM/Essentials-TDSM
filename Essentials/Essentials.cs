@@ -194,6 +194,10 @@ namespace Essentials
                                 Event.Cancelled = true;
                                 break;
                             }
+                        case "plugin":
+                            {
+                                goto case "plugins";
+                            }
                     }
                     
                     lastEventByPlayer[Event.Player.Name] = Event; //Register last command
