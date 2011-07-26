@@ -24,8 +24,13 @@ namespace Essentials
 				else if (!Main.bloodMoon)
 				{
 					Main.bloodMoon = true;
-					server.World.setTime(0, false, false);
-					NetMessage.SendData(25, -1, -1, "The Blood Moon is rising...", 255, 50f, 255f, 130f);
+					if (args.Count > 0)
+					{
+						if (!args[0].ToLower().Equals("time:false"))
+						{
+							server.World.setTime(53999, false, false);
+						}
+					}
 					ProgramLog.Admin.Log("[" + Essentials.pluginName + "]: Triggered blood moon phase.");
 				}
 				else
