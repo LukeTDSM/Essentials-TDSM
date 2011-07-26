@@ -81,23 +81,37 @@ namespace Essentials
         {
             if (sender is Player)
             {
-                Player player = (Player)sender;
-                PlayerCommandEvent lastEvent = null;
-                Essentials.lastEventByPlayer.TryGetValue(player.Name, out lastEvent);
-                if (lastEvent != null)
+                if (args.Count > 1)
                 {
-                    Essentials.Log("Executing last event: [" + lastEvent.Message + "]", "Essentials");
-                    // send it to the other plugins in case it's a plugin command
-                    Program.server.PluginManager.processHook(Hooks.PLAYER_COMMAND, lastEvent);
-                    if (lastEvent.Cancelled)
+                    if (args[1].Trim().ToLower().Equals("register"))
                     {
-                        //return true;
+                        String Command = string.Join(" ", args);
+                        Command = Command.Remove(0, Command.IndexOf(args[1]) + args[1].Length).Trim();
+                        if (Command.Length > 0)
+                        {
+                            if (Essentials.lastEventByPlayer.Keys.Contains(sender.Name))
+                            {
+                                Essentials.lastEventByPlayer.Remove(sender.Name);
+                            }
+                            Essentials.lastEventByPlayer.Add(sender.Name, Command);
+                            sender.sendMessage("Command registered!");
+                        }
+                        else
+                        {
+                            sender.sendMessage("Please specify a command");
+                        }
+                        return;
                     }
-                    else
-                    {
-                        Program.commandParser.ParseAndProcess(player, lastEvent.Message);
-                    }
-                    //return true;
+                }
+                Player player = (Player)sender;
+                String Message;
+                Essentials.lastEventByPlayer.TryGetValue(player.Name, out Message);
+                if (Message != null && Message.Length > 0)
+                {
+                    Essentials.Log("Executing last event: [" + Message + "]", "Essentials");
+
+                    //This also calls to plugins
+                    Program.commandParser.ParseAndProcess(player, Message);
                 }
                 else
                 {

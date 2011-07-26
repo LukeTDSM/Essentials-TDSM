@@ -31,7 +31,7 @@ namespace Essentials
 
         public bool isEnabled = false;
         public int i;
-        public static Dictionary<String, PlayerCommandEvent> lastEventByPlayer;
+        public static Dictionary<String, String> lastEventByPlayer;
         public static Properties properties;
         public static KitManager kitManager { get; set; }
         public static Dictionary<int, bool> essentialsPlayerList; //int - player ID, bool - god mode
@@ -48,7 +48,7 @@ namespace Essentials
             string kitsFile = pluginFolder + Path.DirectorySeparatorChar + "kits.xml";
             string propertiesFile = pluginFolder + Path.DirectorySeparatorChar + "essentials.properties";
             
-            lastEventByPlayer = new Dictionary<String, PlayerCommandEvent>();
+            lastEventByPlayer = new Dictionary<String, String>();
             essentialsPlayerList = new Dictionary<int, bool>();
 
             if (!Directory.Exists(pluginFolder))
@@ -98,42 +98,55 @@ namespace Essentials
 
             //Add Commands
             AddCommand("!")
+                .WithAccessLevel(AccessLevel.PLAYER)
                 .Calls(Commands.LastCommand);
 
             AddCommand("slay")
+                .WithAccessLevel(AccessLevel.OP)
                 .Calls(Commands.Slay);
 
             AddCommand("heal")
+                .WithAccessLevel(AccessLevel.OP)
                 .Calls(Commands.HealPlayer);
 
             AddCommand("ping")
+                .WithAccessLevel(AccessLevel.PLAYER)
                 .Calls(Commands.ConnectionTest_Ping); //Need to make a single static function
 
             AddCommand("pong")
+                .WithAccessLevel(AccessLevel.PLAYER)
                 .Calls(Commands.ConnectionTest_Ping); //^^
 
             AddCommand("suicide")
+                .WithAccessLevel(AccessLevel.PLAYER)
                 .Calls(Commands.Suicide);
 
             AddCommand("butcher")
+                .WithAccessLevel(AccessLevel.OP)
                 .Calls(Commands.Butcher);
 
             AddCommand("kit")
+                .WithAccessLevel(AccessLevel.PLAYER)
                 .Calls(Commands.Kit);
 
             AddCommand("god")
+                .WithAccessLevel(AccessLevel.OP)
                 .Calls(Commands.GodMode);
 
             AddCommand("spawn")
+                .WithAccessLevel(AccessLevel.PLAYER)
                 .Calls(Commands.Spawn);
 
             AddCommand("info")
+                .WithAccessLevel(AccessLevel.PLAYER)
                 .Calls(Commands.Info);
 
             AddCommand("plugins")
+                .WithAccessLevel(AccessLevel.OP)
                 .Calls(Commands.Plugins);
 
             AddCommand("plugin")
+                .WithAccessLevel(AccessLevel.OP)
                 .Calls(Commands.Plugins);
         }
 
