@@ -26,13 +26,30 @@ namespace Essentials
 					Main.bloodMoon = true;
 					server.World.setTime(0, false, false);
 					NetMessage.SendData(25, -1, -1, "The Blood Moon is rising...", 255, 50f, 255f, 130f);
-					ProgramLog.Admin.Log("Triggered blood moon phase.");
+					ProgramLog.Admin.Log("[" + Essentials.pluginName + "]: Triggered blood moon phase.");
 				}
 				else
 				{
 					server.notifyAll("Blood Moon disabled");
 					Main.bloodMoon = false;
-					ProgramLog.Admin.Log("Disabled blood moon phase.");
+					ProgramLog.Admin.Log("[" + Essentials.pluginName + "]: Disabled blood moon phase.");
+				}
+				NetMessage.SendData((int)Packet.WORLD_DATA);
+			}
+			else
+			{
+				if (!Main.bloodMoon)
+				{
+					Main.bloodMoon = true;
+					server.World.setTime(0, false, false);
+					NetMessage.SendData(25, -1, -1, "The Blood Moon is rising...", 255, 50f, 255f, 130f);
+					ProgramLog.Admin.Log("[" + Essentials.pluginName + "]: Triggered blood moon phase.");
+				}
+				else
+				{
+					server.notifyAll("Blood Moon disabled");
+					Main.bloodMoon = false;
+					ProgramLog.Admin.Log("[" + Essentials.pluginName + "]: Disabled blood moon phase.");
 				}
 				NetMessage.SendData((int)Packet.WORLD_DATA);
 			}
@@ -54,6 +71,7 @@ namespace Essentials
                     {
                         Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.Width, player.Height, 58, 1, false);
                     }
+					ProgramLog.Admin.Log("[" + Essentials.pluginName + "]: " + player.Name + " healed " + player.Name + ".");
                 }
                 else
                 {
@@ -62,17 +80,110 @@ namespace Essentials
                         Player targetPlayer = Program.server.GetPlayerByName(args[0]);
                         for (int i = 0; i < targetPlayer.statLifeMax - targetPlayer.statLife; i++)
                         {
-                            Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.Width, player.Height, 58, 1, false);
+                            Item.NewItem((int)targetPlayer.Position.X, (int)targetPlayer.Position.Y, targetPlayer.Width, targetPlayer.Height, 58, 1, false);
                         }
                         player.sendMessage("You have healed that player!");
+						ProgramLog.Admin.Log("[" + Essentials.pluginName + "]: " + player.Name + " healed " + targetPlayer.Name + ".");
                     }
                     catch (NullReferenceException)
                     {
                         player.sendMessage("Error: Player not online.");
                     }
                 }
-            }            
+            }
+           	else
+			{
+				if (args.Count < 1)
+                {
+                    ProgramLog.Admin.Log("[" + Essentials.pluginName + "]: You cannot heal yourself as the console.");
+                }
+                else
+                {
+                    try
+                    {
+                        Player targetPlayer = Program.server.GetPlayerByName(args[0]);
+                        for (int i = 0; i < targetPlayer.statLifeMax - targetPlayer.statLife; i++)
+                        {
+                            Item.NewItem((int)targetPlayer.Position.X, (int)targetPlayer.Position.Y, targetPlayer.Width, targetPlayer.Height, 58, 1, false);
+                        }
+						ProgramLog.Admin.Log("[" + Essentials.pluginName + "]: console healed " + targetPlayer.Name + ".");
+                    }
+                    catch (NullReferenceException)
+                    {
+                        ProgramLog.Error.Log("[" + Essentials.pluginName + "]: Error: Player not online.");
+                    }
+                }
+			}
         }
+
+		public static void Invasion(Server server, ISender sender, ArgumentList args)
+		{
+			int direction = 0;
+			int size = 100;
+			int delay = 0;
+			if (sender is Player)
+			{
+				Player player = sender as Player;
+				if (!player.Op)
+				{
+					player.sendMessage("Error: you must be an Op to use /invasion");
+					return;
+				}
+				if (args.Count > 0)
+				{
+					for (int i = 0; i < args.Count; i++)
+					{
+						if (args[i].ToLower().Equals("end"))
+						{
+							Main.invasionSize = 0;
+							player.sendMessage("Invasion ended.");
+							NetMessage.SendData((int)Packet.WORLD_DATA);
+							return;
+						}
+						if (args[i].ToLower().Equals("west"))
+						{
+							direction = 0;
+						}
+						else if (args[i].ToLower().Equals("east"))
+						{
+							direction = Main.maxTilesX;
+						}
+						else if (args[i].ToLower().Contains("size:"))
+						{
+							try
+							{
+								size = Int32.Parse(args[i].Remove(0, 5));
+							}
+							catch
+							{
+								player.sendMessage("Error parsing invasion size; setting to default (100).");
+							}
+						}
+						else if (args[i].ToLower().Contains("delay:"))
+						{
+							try
+							{
+								delay = Int32.Parse(args[i].Remove(0, 6));
+							}
+							catch
+							{
+								player.sendMessage("Error parsing invasion delay; setting to default (0).");
+							}
+						}
+					}
+				}
+				else
+				{
+					player.sendMessage("Setting invasion size, delay and direction to defaults.");
+				}
+				Main.invasionX = direction;
+				Main.invasionSize = size;
+				Main.invasionDelay = delay;
+				Main.invasionType = 1;
+				player.sendMessage("Set invasion to start, size " + Main.invasionSize.ToString() + ", type " + Main.invasionType.ToString() + ", delay " + Main.invasionDelay.ToString() + ".");
+				NetMessage.SendData((int)Packet.WORLD_DATA);
+			}
+		}
 
         public static void ConnectionTest_Ping(Server server, ISender sender, ArgumentList args)
         {
@@ -235,7 +346,7 @@ namespace Essentials
                         }
                     }
 
-                    player.sendMessage("You butcher'd " + killCount.ToString() + " NPC's!", 255, 0f, 255f, 255f);
+                    player.sendMessage("You butchered " + killCount.ToString() + " NPC's!", 255, 0f, 255f, 255f);
                 }
             }            
         }

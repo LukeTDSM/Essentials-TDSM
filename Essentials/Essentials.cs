@@ -35,10 +35,12 @@ namespace Essentials
         public static Properties properties;
         public static KitManager kitManager { get; set; }
         public static Dictionary<int, bool> essentialsPlayerList; //int - player ID, bool - god mode
+		public static String pluginName;
 
         public override void Load()
         {
             Name = "Essentials";
+			pluginName = "Essentials";
             Description = "Essential commands for TDSM.";
             Author = "Luke";
             Version = "0.5";
@@ -112,6 +114,10 @@ namespace Essentials
             AddCommand("heal")
                 .WithAccessLevel(AccessLevel.OP)
                 .Calls(Commands.HealPlayer);
+
+			AddCommand("invasion")
+				.WithAccessLevel(AccessLevel.OP)
+				.Calls(Commands.Invasion);
 
             AddCommand("ping")
                 .WithAccessLevel(AccessLevel.PLAYER)
