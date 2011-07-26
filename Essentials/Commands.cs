@@ -6,11 +6,38 @@ using Terraria_Server;
 using Terraria_Server.Plugin;
 using Essentials.Kit;
 using Terraria_Server.Commands;
+using Terraria_Server.Logging;
 
 namespace Essentials
 {
     public class Commands
     {
+		public static void BloodMoon(Server server, ISender sender, ArgumentList args)
+		{
+			if (sender is Player)
+			{
+				Player player = sender as Player;
+				if (!player.Op)
+				{
+					player.sendMessage("Error: you must be an Op to use /bloodmoon");
+				}
+				else if (!Main.bloodMoon)
+				{
+					Main.bloodMoon = true;
+					server.World.setTime(0, false, false);
+					NetMessage.SendData(25, -1, -1, "The Blood Moon is rising...", 255, 50f, 255f, 130f);
+					ProgramLog.Admin.Log("Triggered blood moon phase.");
+				}
+				else
+				{
+					server.notifyAll("Blood Moon disabled");
+					Main.bloodMoon = false;
+					ProgramLog.Admin.Log("Disabled blood moon phase.");
+				}
+				NetMessage.SendData((int)Packet.WORLD_DATA);
+			}
+		}
+
         public static void HealPlayer(Server server, ISender sender, ArgumentList args)
         {
             if (sender is Player)
@@ -51,7 +78,8 @@ namespace Essentials
         {
             if (sender is Player)
             {
-                Player player = (Player)sender; if ((args.Count > 0 && (args[0].ToLower().Equals("ping") ||
+                Player player = (Player)sender;
+				if ((args.Count > 0 && (args[0].ToLower().Equals("ping") ||
                     args[0].ToLower().Equals("pong"))) || args.Count < 1)
                 {
                     //args[0] = args[0].Remove(0, 1);

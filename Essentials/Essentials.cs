@@ -101,6 +101,10 @@ namespace Essentials
                 .WithAccessLevel(AccessLevel.PLAYER)
                 .Calls(Commands.LastCommand);
 
+			AddCommand("bloodmoon")
+				.WithAccessLevel(AccessLevel.OP)
+				.Calls(Commands.BloodMoon);
+
             AddCommand("slay")
                 .WithAccessLevel(AccessLevel.OP)
                 .Calls(Commands.Slay);
