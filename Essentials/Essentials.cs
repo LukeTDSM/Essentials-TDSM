@@ -12,6 +12,7 @@ using Terraria_Server;
 using Terraria_Server.Commands;
 using Terraria_Server.Events;
 using Essentials.Kit;
+using Terraria_Server.Logging;
 
 namespace Essentials
 {
@@ -30,10 +31,10 @@ namespace Essentials
 
         public bool isEnabled = false;
         public int i;
-        private Dictionary<String, PlayerCommandEvent> lastEventByPlayer;
-        public Properties properties;
-        public KitManager kitManager { get; set; }
-        public Dictionary<int, bool> essentialsPlayerList; //int - player ID, bool - god mode
+        public static Dictionary<String, PlayerCommandEvent> lastEventByPlayer;
+        public static Properties properties;
+        public static KitManager kitManager { get; set; }
+        public static Dictionary<int, bool> essentialsPlayerList; //int - player ID, bool - god mode
 
         public override void Load()
         {
@@ -90,120 +91,68 @@ namespace Essentials
 
         public override void Enable()
         {
-            Program.tConsole.WriteLine(base.Name + " enabled.");
-            //Register Hooks
+            ProgramLog.Log(base.Name + " enabled.");
+
+            //Prepare & Start the God Mode Thread.
             new God.GodMode(this);
-            this.registerHook(Hooks.PLAYER_COMMAND);
+
+            //Add Commands
+            AddCommand("!")
+                .Calls(Commands.LastCommand);
+
+            AddCommand("slay")
+                .Calls(Commands.Slay);
+
+            AddCommand("heal")
+                .Calls(Commands.HealPlayer);
+
+            AddCommand("ping")
+                .Calls(Commands.ConnectionTest_Ping); //Need to make a single static function
+
+            AddCommand("pong")
+                .Calls(Commands.ConnectionTest_Ping); //^^
+
+            AddCommand("suicide")
+                .Calls(Commands.Suicide);
+
+            AddCommand("butcher")
+                .Calls(Commands.Butcher);
+
+            AddCommand("kit")
+                .Calls(Commands.Kit);
+
+            AddCommand("god")
+                .Calls(Commands.GodMode);
+
+            AddCommand("spawn")
+                .Calls(Commands.Spawn);
+
+            AddCommand("info")
+                .Calls(Commands.Info);
+
+            AddCommand("plugins")
+                .Calls(Commands.Plugins);
+
+            AddCommand("plugin")
+                .Calls(Commands.Plugins);
         }
 
         public override void Disable()
         {
-            Program.tConsole.WriteLine(base.Name + " disabled.");
+            ProgramLog.Log(base.Name + " disabled.");
             isEnabled = false;
         }
 
         public static void Log(String message, String pluginName)
         {
-            Program.tConsole.WriteLine("[" + pluginName + "] " + message);
+            ProgramLog.Log("[" + pluginName + "] " + message);
         }
 
         public void Log(String message)
         {
            Log(message, base.Name);
         }
-        
-        public override void onPlayerCommand(PlayerCommandEvent Event)
-        {
-            if (isEnabled == false) { return; }
-            String[] commands = Event.Message.ToLower().Split(' '); //Split into sections (to lower case to work with it better)
-            if (commands.Length > 0)
-            {
-                if (commands[0] != null && commands[0].Trim().Length > 0 && commands[0].Substring(0, 1).Equals("/")) //If it is not nothing, and the string is actually something
-                {
-                    switch (commands[0].Remove(0, 1)) //Remove '/' from command
-                    {
-                        case "!": //Last Command
-                            {
-                                Commands.LastCommand(lastEventByPlayer, Event.Player);
-                                break;
-                            }
-                        case "slay":
-                            {
-                                Commands.Slay(Event.Player, commands);
-                                Event.Cancelled = true;
-                                break;
-                            }
-                        case "heal":
-                            {
-                                Commands.HealPlayer(Event.Player, commands);
-                                Event.Cancelled = true;
-                                break;
-                            }
-                        case "ping":
-                            {
-                                Commands.ConnectionTest(Event.Player, commands);
-                                Event.Cancelled = true;
-                                break;
-                            }
-                        case "pong":
-                            {
-                                goto case "ping";
-                            }
-                        case "suicide":
-                            {
-                                Commands.Suicide(Event.Player);
-                                Event.Cancelled = true;
-                                break;
-                            }
-                        case "butcher":
-                            {
-                                Commands.Butcher(Event.Player, commands);
-                                Event.Cancelled = true;
-                                break;
-                            }
-                        case "kit":
-                            {
-                                if (properties.KitsEnabled)
-                                {
-                                    Commands.Kit(Event.Player, commands, kitManager);
-                                    Event.Cancelled = true;
-                                }
-                                break;
-                            }
-                        case "god":
-                            {
-                                Commands.GodMode(Event.Player, essentialsPlayerList);
-                                Event.Cancelled = true;
-                                break;
-                            }
-                        case "spawn":
-                            {
-                                Commands.Spawn(Event.Player);
-                                Event.Cancelled = true;
-                                break;
-                            }
-                        case "info":
-                            {
-                                Commands.Info(Event.Player);
-                                Event.Cancelled = true;
-                                break;
-                            }
-                        case "plugins":
-                            {
-                                Commands.Plugins(Event.Player, commands);
-                                Event.Cancelled = true;
-                                break;
-                            }
-                        case "plugin":
-                            {
-                                goto case "plugins";
-                            }
-                    }
-                    
-                    lastEventByPlayer[Event.Player.Name] = Event; //Register last command
-                }
-            }
-        }
+       
         private static void CreateDirectory(String dirPath)
         {
             if (!Directory.Exists(dirPath))

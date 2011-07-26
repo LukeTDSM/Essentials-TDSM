@@ -16,7 +16,7 @@ namespace Essentials.God
         public GodMode(Essentials Plugin)
         {
             plugin = Plugin;
-            secondRotation = plugin.properties.GodModeRotation;
+            secondRotation = Essentials.properties.GodModeRotation;
             godThread = new Thread(this.Run);
             godThread.Start();
         }
@@ -25,12 +25,12 @@ namespace Essentials.God
         {
             while (plugin.isEnabled)
             {
-                for (int i = 0; i < plugin.essentialsPlayerList.Count; i++)
+                for (int i = 0; i < Essentials.essentialsPlayerList.Count; i++)
                 {
-                    Player eplayer = Main.players[plugin.essentialsPlayerList.Keys.ElementAt(i)];
-                    if (eplayer.statLife != eplayer.statLifeMax)
+                    Player eplayer = Main.players[Essentials.essentialsPlayerList.Keys.ElementAt(i)];
+                    if (eplayer.statLife != eplayer.statLifeMax && !eplayer.dead)
                     {
-                        if (plugin.essentialsPlayerList.Values.ElementAt(i))
+                        if (Essentials.essentialsPlayerList.Values.ElementAt(i))
                         {
                             Item.NewItem((int)eplayer.Position.X, (int)eplayer.Position.Y, eplayer.Width, eplayer.Height, 58, 1, false);
                         }
