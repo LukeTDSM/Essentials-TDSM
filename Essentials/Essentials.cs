@@ -150,14 +150,6 @@ namespace Essentials
             AddCommand("info")
                 .WithAccessLevel(AccessLevel.PLAYER)
                 .Calls(Commands.Info);
-
-            AddCommand("plugins")
-                .WithAccessLevel(AccessLevel.OP)
-                .Calls(Commands.Plugins);
-
-            AddCommand("plugin")
-                .WithAccessLevel(AccessLevel.OP)
-                .Calls(Commands.Plugins);
         }
 
         public override void Disable()

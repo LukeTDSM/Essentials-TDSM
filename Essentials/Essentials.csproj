@@ -52,8 +52,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Terraria_Server">
-      <HintPath>..\..\TDSM\Terraria_Server\bin\Debug\Terraria_Server.exe</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\TDSM_Git\Terraria_Server\bin\Debug\Terraria_Server.exe</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -313,6 +313,7 @@ namespace Essentials
 
         public static void Butcher(Server server, ISender sender, ArgumentList args)
         {
+            //Shiz needs to be more accurate >.<
             if (sender is Player)
             {
                 Player player = (Player)sender;
@@ -341,10 +342,16 @@ namespace Essentials
                     for (int i = 0; i < Main.npcs.Length - 1; i++)
                     {
                         NPC npc = Main.npcs[i];
-                        if (((npc.Position.X - player.Position.X) / 16 <= Radius) ||
-                            (npc.Position.Y - player.Position.Y) / 16 <= Radius)
+                        int NPC_X = (int)npc.Position.X / 16;
+                        int NPC_Y = (int)npc.Position.Y / 16;
+                        int Player_X = (int)player.Position.X / 16;
+                        int Player_Y = (int)player.Position.Y / 16;
+
+                        if ((Math.Max(Player_X, NPC_X) - Math.Min(Player_X, NPC_X)) <= Radius &&
+                            (Math.Max(Player_Y, NPC_Y) - Math.Min(Player_Y, NPC_Y)) <= Radius)
                         {
-                            if (Main.npcs[i].StrikeNPC(npc.lifeMax, (float)90f, 0) > 0.0)
+                            NetMessage.SendData(28, -1, -1, "", npc.whoAmI, 9999f, 10f, -1f, 0);
+                            if (Main.npcs[i].StrikeNPC(npc.lifeMax, (float)90f, -1) > 0.0)
                             {
                                 killCount++;
                             }
@@ -494,180 +501,5 @@ namespace Essentials
             }            
         }
 
-        public static void Plugins(Server server, ISender sender, ArgumentList args)
-        {
-            /*
-             * Commands:
-             *      list    - shows all loaded plugins
-             *      info    - shows a plugin's author & description etc
-             *      disable - disables a plugin
-             *      enable  - enables a plugin
-             */
-            if (args.Count > 0 && args[0] != null && args[0].Trim().Length > 0 && sender is Player)
-            {
-                Player player = (Player)sender;
-                String command = args[0].Trim();
-                switch (command)
-                {
-                    case "list":
-                        {
-                            String plugins = "None."; //If no plugins
-                            if (Program.server.PluginManager.PluginList.Count > 0)
-                            {
-                                plugins = "";
-
-                                foreach (Plugin plugin in Program.server.PluginManager.PluginList.Values)
-                                {
-                                    if (plugin.Name.Trim().Length > 0)
-                                    {
-                                        plugins = ", " + plugin.Name.Trim() + " " + ((!plugin.Enabled) ? "[DISABLED]" : ""); //, Plugin1, Plugin2
-                                    }
-                                }
-                                if (plugins.StartsWith(","))
-                                {
-                                    plugins = plugins.Remove(0, 1).Trim(); //Plugin1, Plugin2 {Remove the ', ' from the start and trim the ends}
-                                }
-                            }
-
-                            player.sendMessage("Loaded Plugins: " + plugins + ".");
-                            break;
-                        }
-                    case "info":
-                        {
-                            if (!(args.Count > 0 && args[1] != null && args[0].Trim().Length > 0))
-                            {
-                                player.sendMessage("Please review your argument count.");
-                            }
-
-                            //Get plugin Name
-                            String pluginName = string.Join(" ", args);
-                            pluginName = pluginName.Remove(0, pluginName.IndexOf(args[1])).Trim();
-
-                            if (Program.server.PluginManager.PluginList.Count > 0)
-                            {
-                                Plugin fplugin = Program.server.PluginManager.getPlugin(pluginName);
-                                if (fplugin != null)
-                                {
-                                    player.sendMessage("Plugin Name: " + fplugin.Name);
-                                    player.sendMessage("Plugin Author: " + fplugin.Author);
-                                    player.sendMessage("Plugin Description: " + fplugin.Description);
-                                    player.sendMessage("Plugin Enabled: " + fplugin.Enabled.ToString());
-                                }
-                                else
-                                {
-                                    player.sendMessage("Sorry, That Plugin was not found. (" + args[1] + ")");
-                                }
-                            }
-                            else
-                            {
-                                player.sendMessage("Sorry, There are no Plugins Loaded.");
-                            }
-                            break;
-                        }
-                    case "disable":
-                        {
-                            if (!player.Op)
-                            {
-                                player.sendMessage("Error: you must be Op to use feature.");
-                                return;
-                            }
-                            if (!(args.Count > 0 && args[1] != null && args[1].Trim().Length > 0))
-                            {
-                                player.sendMessage("Please review your argument count.");
-                            }
-
-                            //Get plugin Name
-                            String pluginName = string.Join(" ", args);
-                            pluginName = pluginName.Remove(0, pluginName.IndexOf(args[1])).Trim();
-
-                            if (Program.server.PluginManager.PluginList.Count > 0)
-                            {
-                                Plugin fplugin = Program.server.PluginManager.getPlugin(pluginName);
-                                if (fplugin != null)
-                                {
-                                    if (fplugin.Enabled)
-                                    {
-                                        if (Program.server.PluginManager.DisablePlugin(fplugin.Name))
-                                        {
-                                            player.sendMessage(args[1] + " was Disabled!");
-                                        }
-                                        else
-                                        {
-                                            player.sendMessage("Sorry, here was an issue Disabling that plugin. (" + args[1] + ")");
-                                        }
-                                    }
-                                    else
-                                    {
-                                        player.sendMessage("Sorry, That Plugin is already Disabled. (" + args[1] + ")");
-                                    }
-                                }
-                                else
-                                {
-                                    player.sendMessage("Sorry, That Plugin was not found. (" + args[1] + ")");
-                                }
-                            }
-                            else
-                            {
-                                player.sendMessage("Sorry, There are no Plugins Loaded.");
-                            }
-                            break;
-                        }
-                    case "enable":
-                        {
-                            if (!player.Op)
-                            {
-                                player.sendMessage("Error: you must be Op to use this feature.");
-                                return;
-                            }
-                            if (!(args.Count > 0 && args[1] != null && args[0].Trim().Length > 0))
-                            {
-                                player.sendMessage("Please review your argument count.");
-                            }
-
-                            //Get plugin Name
-                            String pluginName = string.Join(" ", args);
-                            pluginName = pluginName.Remove(0, pluginName.IndexOf(args[1])).Trim();
-
-                            if (Program.server.PluginManager.PluginList.Count > 0)
-                            {
-                                Plugin fplugin = Program.server.PluginManager.getPlugin(pluginName);
-                                if (fplugin != null)
-                                {
-                                    if (!fplugin.Enabled)
-                                    {
-                                        if (Program.server.PluginManager.EnablePlugin(fplugin.Name))
-                                        {
-                                            player.sendMessage(args[1] + " was Enabled!");
-                                        }
-                                        else
-                                        {
-                                            player.sendMessage("Sorry, here was an issue Enabling that plugin. (" + args[1] + ")");
-                                        }
-                                    }
-                                    else
-                                    {
-                                        player.sendMessage("Sorry, That Plugin is already Enabled. (" + args[1] + ")");
-                                    }
-                                }
-                                else
-                                {
-                                    player.sendMessage("Sorry, That Plugin was not found. (" + args[1] + ")");
-                                }
-                            }
-                            else
-                            {
-                                player.sendMessage("Sorry, There are no Plugins Loaded.");
-                            }
-                            break;
-                        }
-                    default:
-                        {
-                            player.sendMessage("Please review the usage of this function");
-                            break;
-                        }
-                }
-            }
-        }
-    
     }
 }
