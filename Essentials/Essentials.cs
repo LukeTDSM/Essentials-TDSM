@@ -18,19 +18,7 @@ namespace Essentials
 {
     public class Essentials : Plugin
     {
-        /*
-         * @Developers
-         *
-         * Plugins need to be in .NET 3.5
-         * Otherwise TDSM will be unable to load it.
-         *
-         * As of June 16, 1:15 AM, TDSM should now load Plugins Dynamically.
-         */
-
-        // tConsole is used for when logging Output to the console & a log file.
-
         public bool isEnabled = false;
-        public int i;
         public static Dictionary<String, String> lastEventByPlayer;
         public static Properties properties;
         public static KitManager kitManager { get; set; }
@@ -44,7 +32,7 @@ namespace Essentials
             Description = "Essential commands for TDSM.";
             Author = "Luke";
             Version = "0.5";
-            TDSMBuild = 27;
+            TDSMBuild = 29;
 
             string pluginFolder = Statics.PluginPath + Path.DirectorySeparatorChar + "Essentials";
             string kitsFile = pluginFolder + Path.DirectorySeparatorChar + "kits.xml";
@@ -78,7 +66,6 @@ namespace Essentials
             }
             catch (Exception e)
             {
-                Log(e.Message);
                 Console.Write("Create a parsable file? [Y/n]: ");
                 if (Console.ReadLine().ToLower() == "y")
                 {
@@ -133,6 +120,9 @@ namespace Essentials
 
             AddCommand("butcher")
                 .WithAccessLevel(AccessLevel.OP)
+                .WithDescription("Kill all NPC's within a radius")
+                .WithHelpText("Usage:    butcher <radius>")
+                .WithHelpText("          butcher <radius> -g[uide]")
                 .Calls(Commands.Butcher);
 
             AddCommand("kit")
