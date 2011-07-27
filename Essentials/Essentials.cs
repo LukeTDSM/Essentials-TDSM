@@ -64,7 +64,7 @@ namespace Essentials
             {
                     kitManager.LoadKits();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.Write("Create a parsable file? [Y/n]: ");
                 if (Console.ReadLine().ToLower() == "y")
