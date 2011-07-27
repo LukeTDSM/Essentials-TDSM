@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 
-
-using Essentials;
-using Terraria_Server.Plugin;
 using Terraria_Server;
 using Terraria_Server.Commands;
 using Terraria_Server.Events;
-using Essentials.Kit;
 using Terraria_Server.Logging;
+using Terraria_Server.Plugin;
+
+using Essentials;
+using Essentials.Kit;
 
 namespace Essentials
 {
@@ -31,7 +31,7 @@ namespace Essentials
 			pluginName = "Essentials";
             Description = "Essential commands for TDSM.";
             Author = "Luke";
-            Version = "0.5";
+            Version = "0.6";
             TDSMBuild = 29;
 
             string pluginFolder = Statics.PluginPath + Path.DirectorySeparatorChar + "Essentials";

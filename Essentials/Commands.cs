@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using Terraria_Server;
-using Terraria_Server.Plugin;
-using Essentials.Kit;
 using Terraria_Server.Commands;
 using Terraria_Server.Logging;
+using Terraria_Server.Plugin;
+
+using Essentials.Kit;
 
 namespace Essentials
 {
