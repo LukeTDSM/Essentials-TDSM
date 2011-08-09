@@ -452,7 +452,7 @@ namespace Essentials
             if (sender is Player)
             {
                 Player player = (Player)sender;
-                player.teleportTo(Main.spawnTileX, Main.spawnTileY);
+                player.teleportTo(Main.spawnTileX / 16f, Main.spawnTileY / 16f);
                 player.sendMessage("You have been Teleported to Spawn");
             }
         }

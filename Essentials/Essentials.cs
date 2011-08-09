@@ -42,7 +42,7 @@ namespace Essentials
             essentialsPlayerList = new Dictionary<int, bool>();
 
             if (!Directory.Exists(pluginFolder))
-                CreateDirectory(pluginFolder); //Touch Directory, Wee need this.
+                CreateDirectory(pluginFolder); //Touch Directory, We need this.
 
             //We do not want to delete records!
             if (!File.Exists(kitsFile))
