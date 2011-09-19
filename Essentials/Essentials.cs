@@ -161,7 +161,7 @@ namespace Essentials
             Log(ProgramLog.Plugin, message);
         }
 
-        void OnPlayerEnterGame(ref HookContext ctx, ref HookArgs.PlayerEnteredGame args) //[ToDo] Test
+        void OnPlayerEnterGame(ref HookContext ctx, ref HookArgs.PlayerEnteredGame args)
         {
             if (essentialsPlayerList.ContainsKey(ctx.Connection.SlotIndex)) 
             {

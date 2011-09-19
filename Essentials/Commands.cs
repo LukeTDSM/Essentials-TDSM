@@ -455,7 +455,7 @@ namespace Essentials
             if (sender is Player)
             {
                 Player player = (Player)sender;
-                player.teleportTo(Main.spawnTileX / 16f, Main.spawnTileY / 16f);
+                player.Teleport(Main.spawnTileX * 16f, Main.spawnTileY * 16f);
                 player.sendMessage("You have been Teleported to Spawn");
             }
         }
@@ -479,7 +479,7 @@ namespace Essentials
             sender.sendMessage("The current OS running this sever is: " + Platform, 255, 160f, 32f, 240f);        
         }
 
-        public static void SetSpawn(ISender sender, ArgumentList args) //[ToDo] Test
+        public static void SetSpawn(ISender sender, ArgumentList args)
         {
             if (sender is Player)
             {
