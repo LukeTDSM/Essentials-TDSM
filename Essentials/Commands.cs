@@ -6,15 +6,16 @@ using System.Text;
 using Terraria_Server;
 using Terraria_Server.Commands;
 using Terraria_Server.Logging;
-using Terraria_Server.Plugin;
 
 using Essentials.Kit;
+using Terraria_Server.Misc;
+using Terraria_Server.WorldMod;
 
 namespace Essentials
 {
     public class Commands
     {
-		public static void BloodMoon(Server server, ISender sender, ArgumentList args)
+		public static void BloodMoon(ISender sender, ArgumentList args)
 		{
 			if (sender is Player)
 			{
@@ -26,16 +27,16 @@ namespace Essentials
 					{
 						if (!args[0].ToLower().Equals("time:false"))
 						{
-							server.World.setTime(53999, false, false);
+                            Server.World.setTime(53999, false, false);
 						}
 					}
-					ProgramLog.Admin.Log("[" + Essentials.pluginName + "]: Triggered blood moon phase.");
+                    Essentials.Log("Triggered blood moon phase.");
 				}
 				else
 				{
-					server.notifyAll("Blood Moon disabled");
+                    Server.notifyAll("Blood Moon disabled");
 					Main.bloodMoon = false;
-					ProgramLog.Admin.Log("[" + Essentials.pluginName + "]: Disabled blood moon phase.");
+					Essentials.Log("Disabled blood moon phase.");
 				}
 				NetMessage.SendData((int)Packet.WORLD_DATA);
 			}
@@ -44,21 +45,21 @@ namespace Essentials
 				if (!Main.bloodMoon)
 				{
 					Main.bloodMoon = true;
-					server.World.setTime(0, false, false);
+					Server.World.setTime(0, false, false);
 					NetMessage.SendData(25, -1, -1, "The Blood Moon is rising...", 255, 50f, 255f, 130f);
-					ProgramLog.Admin.Log("[" + Essentials.pluginName + "]: Triggered blood moon phase.");
+                    Essentials.Log("Triggered blood moon phase.");
 				}
 				else
 				{
-					server.notifyAll("Blood Moon disabled");
+					Server.notifyAll("Blood Moon disabled");
 					Main.bloodMoon = false;
-					ProgramLog.Admin.Log("[" + Essentials.pluginName + "]: Disabled blood moon phase.");
+                    Essentials.Log("Disabled blood moon phase.");
 				}
 				NetMessage.SendData((int)Packet.WORLD_DATA);
 			}
 		}
 
-        public static void HealPlayer(Server server, ISender sender, ArgumentList args)
+        public static void HealPlayer(ISender sender, ArgumentList args)
         {
             if (sender is Player)
             {
@@ -70,19 +71,19 @@ namespace Essentials
                     {
                         Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.Width, player.Height, 58, 1, false);
                     }
-					ProgramLog.Admin.Log("[" + Essentials.pluginName + "]: " + player.Name + " healed " + player.Name + ".");
+					Essentials.Log(player.Name + " healed " + player.Name + ".");
                 }
                 else
                 {
                     try
                     {
-                        Player targetPlayer = Program.server.GetPlayerByName(args[0]);
+                        Player targetPlayer = Server.GetPlayerByName(args[0]);
                         for (int i = 0; i < targetPlayer.statLifeMax - targetPlayer.statLife; i++)
                         {
                             Item.NewItem((int)targetPlayer.Position.X, (int)targetPlayer.Position.Y, targetPlayer.Width, targetPlayer.Height, 58, 1, false);
                         }
                         player.sendMessage("You have healed that player!");
-						ProgramLog.Admin.Log("[" + Essentials.pluginName + "]: " + player.Name + " healed " + targetPlayer.Name + ".");
+						Essentials.Log(player.Name + " healed " + targetPlayer.Name + ".");
                     }
                     catch (NullReferenceException)
                     {
@@ -94,28 +95,28 @@ namespace Essentials
 			{
 				if (args.Count < 1)
                 {
-                    ProgramLog.Admin.Log("[" + Essentials.pluginName + "]: You cannot heal yourself as the console.");
+                    Essentials.Log("You cannot heal yourself as the console.");
                 }
                 else
                 {
                     try
                     {
-                        Player targetPlayer = Program.server.GetPlayerByName(args[0]);
+                        Player targetPlayer = Server.GetPlayerByName(args[0]);
                         for (int i = 0; i < targetPlayer.statLifeMax - targetPlayer.statLife; i++)
                         {
                             Item.NewItem((int)targetPlayer.Position.X, (int)targetPlayer.Position.Y, targetPlayer.Width, targetPlayer.Height, 58, 1, false);
                         }
-						ProgramLog.Admin.Log("[" + Essentials.pluginName + "]: console healed " + targetPlayer.Name + ".");
+                        Essentials.Log("Console healed " + targetPlayer.Name + ".");
                     }
                     catch (NullReferenceException)
                     {
-                        ProgramLog.Error.Log("[" + Essentials.pluginName + "]: Error: Player not online.");
+                        Essentials.Log(ProgramLog.Error, "Player not online.");
                     }
                 }
 			}
         }
 
-		public static void Invasion(Server server, ISender sender, ArgumentList args)
+		public static void Invasion(ISender sender, ArgumentList args)
 		{
 			int direction = 0;
 			int size = 100;
@@ -179,7 +180,7 @@ namespace Essentials
 			}
 		}
 
-        public static void ConnectionTest_Ping(Server server, ISender sender, ArgumentList args)
+        public static void ConnectionTest_Ping(ISender sender, ArgumentList args)
         {
             if (sender is Player)
             {
@@ -210,7 +211,7 @@ namespace Essentials
             }
         }
 
-        public static void LastCommand(Server server, ISender sender, ArgumentList args)
+        public static void LastCommand(ISender sender, ArgumentList args)
         {
             if (sender is Player)
             {
@@ -241,7 +242,7 @@ namespace Essentials
                 Essentials.lastEventByPlayer.TryGetValue(player.Name, out Message);
                 if (Message != null && Message.Length > 0)
                 {
-                    Essentials.Log("Executing last event: [" + Message + "]", "Essentials");
+                    Essentials.Log("Executing last event: [" + Message + "]");
 
                     //This also calls to plugins
                     Program.commandParser.ParseAndProcess(player, Message);
@@ -254,7 +255,7 @@ namespace Essentials
             //return false;
         }
 
-        public static void Slay(Server server, ISender sender, ArgumentList args)
+        public static void Slay(ISender sender, ArgumentList args)
         {
             Player player = (Player)sender;
             if (args.Count < 1)
@@ -265,10 +266,10 @@ namespace Essentials
             {
                 try
                 {
-                    Player targetPlayer = Program.server.GetPlayerByName(args[0]);
+                    Player targetPlayer = Server.GetPlayerByName(args[0]);
                     NetMessage.SendData(26, -1, -1, " of unknown causes...", targetPlayer.whoAmi, 0, (float)9999, (float)0);
                     player.sendMessage("OMG! You killed " + args[0] + "!", 255, 0f, 255f, 255f);
-                    Essentials.Log("Player " + player + " used /slay on " + targetPlayer.Name, "Essentials");
+                    Essentials.Log("Player " + player + " used /slay on " + targetPlayer.Name);
                 }
                 catch (NullReferenceException)
                 {
@@ -277,7 +278,7 @@ namespace Essentials
             }           
         }
 
-        public static void Suicide(Server server, ISender sender, ArgumentList args)
+        public static void Suicide(ISender sender, ArgumentList args)
         {
             if (sender is Player)
             {
@@ -293,7 +294,7 @@ namespace Essentials
             }
         }
 
-        public static void Butcher(Server server, ISender sender, ArgumentList args)
+        public static void Butcher(ISender sender, ArgumentList args)
         {
             if (sender is Player)
             {
@@ -337,7 +338,7 @@ namespace Essentials
                             direction = 0;
                         }
                         NetMessage.SendData(28, -1, -1, "", npc.whoAmI, 9999, 10f, direction, 0);
-                        if (Main.npcs[i].StrikeNPC(npc.lifeMax, 9999, (int)direction) > 0.0) //Bahah fly little ****ers
+                        if (Main.npcs[i].StrikeNPCInternal(npc.lifeMax, 9999, (int)direction) > 0.0)
                         {
                             killCount++;
                         }
@@ -348,7 +349,7 @@ namespace Essentials
             }            
         }
 
-        public static void Kit(Server server, ISender sender, ArgumentList args)
+        public static void Kit(ISender sender, ArgumentList args)
         {
             Player player = (Player)sender;
             if (!(sender is Player))
@@ -413,7 +414,7 @@ namespace Essentials
             }        
         }
 
-        public static void GodMode(Server server, ISender sender, ArgumentList args)
+        public static void GodMode(ISender sender, ArgumentList args)
         {
             Player player = (Player)sender;
             if (!(sender is Player))
@@ -449,7 +450,7 @@ namespace Essentials
             player.sendMessage("God Mode Status: " + godModeStatus.ToString());            
         }
 
-        public static void Spawn(Server server, ISender sender, ArgumentList args)
+        public static void Spawn(ISender sender, ArgumentList args)
         {
             if (sender is Player)
             {
@@ -459,7 +460,7 @@ namespace Essentials
             }
         }
 
-        public static void Info(Server server, ISender sender, ArgumentList args)
+        public static void Info(ISender sender, ArgumentList args)
         {
             sender.sendMessage("Essentials Plugin for TDSM b" + Statics.BUILD, 255, 160f, 32f, 240f);
             String Platform = Terraria_Server.Definitions.Platform.Type.ToString();
@@ -478,5 +479,21 @@ namespace Essentials
             sender.sendMessage("The current OS running this sever is: " + Platform, 255, 160f, 32f, 240f);        
         }
 
+        public static void SetSpawn(ISender sender, ArgumentList args) //[ToDo] Test
+        {
+            if (sender is Player)
+            {
+                var player = sender as Player;
+                var saveWorld = args.TryPop("-save");
+                
+                Main.spawnTileX = (int)(player.Position.X / 16);
+                Main.spawnTileY = (int)(player.Position.Y / 16);
+
+                if (saveWorld)
+                    WorldIO.saveWorld(Server.World.SavePath);
+
+                Server.notifyOps(String.Format("{0} set Spawn to {1}, {2}.", sender.Name, Main.spawnTileX, Main.spawnTileY));
+            }
+        }
     }
 }

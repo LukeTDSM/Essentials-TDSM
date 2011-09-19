@@ -7,28 +7,27 @@ using System.Xml;
 
 using Terraria_Server;
 using Terraria_Server.Commands;
-using Terraria_Server.Events;
 using Terraria_Server.Logging;
-using Terraria_Server.Plugin;
 
 using Essentials;
 using Essentials.Kit;
+using Terraria_Server.Plugins;
+using Essentials.God;
 
 namespace Essentials
 {
-    public class Essentials : Plugin
+    public class Essentials : BasePlugin
     {
-        public bool isEnabled = false;
-        public static Dictionary<String, String> lastEventByPlayer;
         public static Properties properties;
-        public static KitManager kitManager { get; set; }
         public static Dictionary<int, bool> essentialsPlayerList; //int - player ID, bool - god mode
-		public static String pluginName;
+        public static KitManager kitManager { get; set; }
+        public static Dictionary<String, String> lastEventByPlayer;
 
-        public override void Load()
+        public GodMode God { get; set; }
+
+        protected override void Initialized(object state)
         {
             Name = "Essentials";
-			pluginName = "Essentials";
             Description = "Essential commands for TDSM.";
             Author = "Luke";
             Version = "0.6";
@@ -70,20 +69,18 @@ namespace Essentials
                 if (Console.ReadLine().ToLower() == "y")
                 {
                     kitManager.CreateTemplate();
-                    goto LOADKITS; //Go back to reload data ;)...Im lazy I KNOW
+                    goto LOADKITS; //Go back to reload data ;)...I'm lazy I KNOW
                 }
             }
             Log("Complete, Loaded " + kitManager.KitList.Count + " Kit(s)");
-            
-            isEnabled = true;
         }
 
-        public override void Enable()
+        protected override void Enabled()
         {
             ProgramLog.Log(base.Name + " enabled.");
 
             //Prepare & Start the God Mode Thread.
-            new God.GodMode(this);
+            God = new GodMode(this);
 
             //Add Commands
             AddCommand("!")
@@ -140,25 +137,39 @@ namespace Essentials
             AddCommand("info")
                 .WithAccessLevel(AccessLevel.PLAYER)
                 .Calls(Commands.Info);
+
+            AddCommand("setspawn")
+                .WithAccessLevel(AccessLevel.OP)
+                .Calls(Commands.SetSpawn);
+
+            Hook(HookPoints.PlayerEnteredGame, OnPlayerEnterGame);
         }
 
-        public override void Disable()
+        protected override void Disabled()
         {
-            ProgramLog.Log(base.Name + " disabled.");
-            isEnabled = false;
+            God.Running = false;
+            ProgramLog.Plugin.Log(base.Name + " disabled.");
         }
 
-        public static void Log(String message, String pluginName)
+        public static void Log(LogChannel Level, string message)
         {
-            ProgramLog.Log("[" + pluginName + "] " + message);
+            Level.Log("[Essentials] " + message);
         }
 
-        public void Log(String message)
+        public static void Log(string message)
         {
-           Log(message, base.Name);
+            Log(ProgramLog.Plugin, message);
+        }
+
+        void OnPlayerEnterGame(ref HookContext ctx, ref HookArgs.PlayerEnteredGame args) //[ToDo] Test
+        {
+            if (essentialsPlayerList.ContainsKey(ctx.Connection.SlotIndex)) 
+            {
+                essentialsPlayerList.Remove(ctx.Connection.SlotIndex);
+            }
         }
        
-        private static void CreateDirectory(String dirPath)
+        private static void CreateDirectory(string dirPath)
         {
             if (!Directory.Exists(dirPath))
             {

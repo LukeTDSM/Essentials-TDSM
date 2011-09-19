@@ -13,18 +13,22 @@ namespace Essentials.God
         Essentials plugin;
         public Thread godThread;
         int secondRotation;
+        public bool Running { get; set; }
 
         public GodMode(Essentials Plugin)
         {
             plugin = Plugin;
             secondRotation = Essentials.properties.GodModeRotation;
+
+            Running = true;
+
             godThread = new Thread(this.Run);
             godThread.Start();
         }
 
         public void Run()
         {
-            while (plugin.isEnabled)
+            while (Running)
             {
                 for (int i = 0; i < Essentials.essentialsPlayerList.Count; i++)
                 {
