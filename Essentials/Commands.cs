@@ -495,5 +495,14 @@ namespace Essentials
                 Server.notifyOps(String.Format("{0} set Spawn to {1}, {2}.", sender.Name, Main.spawnTileX, Main.spawnTileY));
             }
         }
+
+        public static void MessagePlayer(ISender sender, ArgumentList args)
+        {
+            var Player = args.GetOnlinePlayer(0);
+            var Message = args.GetString(1);
+
+            Player.sendMessage(String.Format("[{0}] PM: {1}", sender.Name, Message), ChatColor.DarkGray);
+            Server.notifyOps(String.Format("PM {0} => {1}: {2}", sender.Name, Player.Name, Message));
+        }
     }
 }

@@ -142,6 +142,10 @@ namespace Essentials
                 .WithAccessLevel(AccessLevel.OP)
                 .Calls(Commands.SetSpawn);
 
+            AddCommand("pm")
+                .WithAccessLevel(AccessLevel.PLAYER)
+                .Calls(Commands.MessagePlayer);
+
             Hook(HookPoints.PlayerEnteredGame, OnPlayerEnterGame);
         }
 
