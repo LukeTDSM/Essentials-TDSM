@@ -18,10 +18,11 @@ namespace Essentials
 {
     public class Essentials : BasePlugin
     {
-        public static Properties properties;
-        public static Dictionary<int, bool> essentialsPlayerList; //int - player ID, bool - god mode
-        public static KitManager kitManager { get; set; }
-        public static Dictionary<String, String> lastEventByPlayer;
+        public Properties properties;
+        public Dictionary<int, bool> essentialsPlayerList; //int - player ID, bool - god mode
+        public Dictionary<int, bool> essentialsRPGPlayerList; //''
+        public KitManager kitManager { get; set; }
+        public Dictionary<String, String> lastEventByPlayer;
 
         public GodMode God { get; set; }
 
@@ -38,7 +39,8 @@ namespace Essentials
             string propertiesFile = pluginFolder + Path.DirectorySeparatorChar + "essentials.properties";
             
             lastEventByPlayer = new Dictionary<String, String>();
-            essentialsPlayerList = new Dictionary<int, bool>();
+            essentialsPlayerList = new Dictionary<Int32, Boolean>();
+            essentialsRPGPlayerList = new Dictionary<Int32, Boolean>();
 
             if (!Directory.Exists(pluginFolder))
                 CreateDirectory(pluginFolder); //Touch Directory, We need this.
@@ -147,6 +149,8 @@ namespace Essentials
                 .Calls(Commands.MessagePlayer);
 
             Hook(HookPoints.PlayerEnteredGame, OnPlayerEnterGame);
+            Hook(HookPoints.PlayerLeftGame, OnPlayerLeaveGame);
+            Hook(HookPoints.UnkownSendPacket, Net.OnUnkownPacketSend);
         }
 
         protected override void Disabled()
@@ -167,9 +171,19 @@ namespace Essentials
 
         void OnPlayerEnterGame(ref HookContext ctx, ref HookArgs.PlayerEnteredGame args)
         {
-            if (essentialsPlayerList.ContainsKey(ctx.Connection.SlotIndex)) 
+            CheckGodList(ctx.Connection.SlotIndex);
+        }
+
+        void OnPlayerLeaveGame(ref HookContext ctx, ref HookArgs.PlayerLeftGame args)
+        {
+            CheckGodList(ctx.Connection.SlotIndex);
+        }
+
+        void CheckGodList(int index)
+        {
+            if (essentialsPlayerList.ContainsKey(index))
             {
-                essentialsPlayerList.Remove(ctx.Connection.SlotIndex);
+                essentialsPlayerList.Remove(index);
             }
         }
        

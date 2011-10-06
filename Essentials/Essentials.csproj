@@ -60,6 +60,7 @@
     <Compile Include="God\GodMode.cs" />
     <Compile Include="Kit\Kit.cs" />
     <Compile Include="Kit\KitManager.cs" />
+    <Compile Include="Net.cs" />
     <Compile Include="Properties.cs" />
     <Compile Include="Essentials.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -213,6 +213,7 @@ namespace Essentials
 
         public static void LastCommand(ISender sender, ArgumentList args)
         {
+            Essentials Plugin = (Essentials)args.Plugin;
             if (sender is Player)
             {
                 if (args.Count > 1)
@@ -223,11 +224,11 @@ namespace Essentials
                         Command = Command.Remove(0, Command.IndexOf(args[1]) + args[1].Length).Trim();
                         if (Command.Length > 0)
                         {
-                            if (Essentials.lastEventByPlayer.Keys.Contains(sender.Name))
+                            if (Plugin.lastEventByPlayer.Keys.Contains(sender.Name))
                             {
-                                Essentials.lastEventByPlayer.Remove(sender.Name);
+                                Plugin.lastEventByPlayer.Remove(sender.Name);
                             }
-                            Essentials.lastEventByPlayer.Add(sender.Name, Command);
+                            Plugin.lastEventByPlayer.Add(sender.Name, Command);
                             sender.sendMessage("Command registered!");
                         }
                         else
@@ -239,7 +240,7 @@ namespace Essentials
                 }
                 Player player = (Player)sender;
                 String Message;
-                Essentials.lastEventByPlayer.TryGetValue(player.Name, out Message);
+                Plugin.lastEventByPlayer.TryGetValue(player.Name, out Message);
                 if (Message != null && Message.Length > 0)
                 {
                     Essentials.Log("Executing last event: [" + Message + "]");
@@ -257,25 +258,11 @@ namespace Essentials
 
         public static void Slay(ISender sender, ArgumentList args)
         {
-            Player player = (Player)sender;
-            if (args.Count < 1)
-            {
-                player.sendMessage("Error: you must specify a player to slay");
-            }
-            else
-            {
-                try
-                {
-                    Player targetPlayer = Server.GetPlayerByName(args[0]);
-                    NetMessage.SendData(26, -1, -1, " of unknown causes...", targetPlayer.whoAmi, 0, (float)9999, (float)0);
-                    player.sendMessage("OMG! You killed " + args[0] + "!", 255, 0f, 255f, 255f);
-                    Essentials.Log("Player " + player + " used /slay on " + targetPlayer.Name);
-                }
-                catch (NullReferenceException)
-                {
-                    player.sendMessage("Error: Player not online.");
-                }
-            }           
+            var player = args.GetOnlinePlayer(0);
+
+            NetMessage.SendData(26, -1, -1, " of unknown causes...", player.whoAmi, 0, (float)9999, (float)0);
+            sender.sendMessage("OMG! You killed " + player.Name + "!", 255, 0f, 255f, 255f);
+            Essentials.Log("Player " + player + " used /slay on " + player.Name);          
         }
 
         public static void Suicide(ISender sender, ArgumentList args)
@@ -351,20 +338,15 @@ namespace Essentials
 
         public static void Kit(ISender sender, ArgumentList args)
         {
-            Player player = (Player)sender;
-            if (!(sender is Player))
-            {
-                if (!args.TryGetOnlinePlayer(1, out player))
-                {
-                    sender.sendMessage("As a non player, Please specify one!");
-                    return;
-                }
-            }
+            Essentials Plugin = (Essentials)args.Plugin;
+
+            Player player = args.GetOnlinePlayer(0);
+
             if (args.Count > 0)
             {
-                if (Essentials.kitManager.ContainsKit(args[0]))
+                if (Plugin.kitManager.ContainsKit(args[0]))
                 {
-                    Kit.Kit kit = Essentials.kitManager.getKit(args[0]);
+                    Kit.Kit kit = Plugin.kitManager.getKit(args[0]);
                     if (kit != null && kit.ItemList != null)
                     {
                         foreach (int ItemID in kit.ItemList)
@@ -384,7 +366,7 @@ namespace Essentials
                 else if (args[0].Equals("help"))
                 {
                     String Kits = "";
-                    foreach (Kit.Kit kit in Essentials.kitManager.KitList)
+                    foreach (Kit.Kit kit in Plugin.kitManager.KitList)
                     {
                         if (kit.Name.Trim().Length > 0)
                         {
@@ -416,26 +398,49 @@ namespace Essentials
 
         public static void GodMode(ISender sender, ArgumentList args)
         {
-            Player player = (Player)sender;
-            if (!(sender is Player))
+            Essentials Plugin = (Essentials)args.Plugin;
+
+            Player player = args.GetOnlinePlayer(0);
+            //if (!(sender is Player))
+            //{
+            //    if (!args.TryGetOnlinePlayer(1, out player))
+            //    {
+            //        sender.sendMessage("As a non player, Please specify one!");
+            //        return;
+            //    }
+            //}
+
+            if (player.HasClientMod)
             {
-                if (!args.TryGetOnlinePlayer(1, out player))
+                //Tell the client to use God.
+                bool On;
+                if (Plugin.essentialsRPGPlayerList.TryGetValue(player.whoAmi, out On))
                 {
-                    sender.sendMessage("As a non player, Please specify one!");
-                    return;
+                    NetMessage.SendData((int)Packets.CLIENT_MOD_GOD, player.whoAmi, -1, "", 0);
+                    if (!Server.AllowTDCMRPG)
+                        Plugin.essentialsRPGPlayerList.Remove(player.whoAmi);
                 }
-            }      
+                else
+                {
+                    NetMessage.SendData((int)Packets.CLIENT_MOD_GOD, player.whoAmi, -1, "", 1);
+                    if (!Server.AllowTDCMRPG)
+                        Plugin.essentialsRPGPlayerList.Add(player.whoAmi, true);
+                }
+
+                return;
+            }
+
             bool found = false;
             bool godModeStatus = false;
-            for (int i = 0; i < Essentials.essentialsPlayerList.Count; i++ )
+            for (int i = 0; i < Plugin.essentialsPlayerList.Count; i++)
             {
-                int PlayerID = Essentials.essentialsPlayerList.Keys.ElementAt(i);
+                int PlayerID = Plugin.essentialsPlayerList.Keys.ElementAt(i);
                 Player eplayer = Main.players[PlayerID];
                 if (eplayer.Name.Equals(player.Name))
                 {
-                    bool GodMode = !Essentials.essentialsPlayerList.Values.ElementAt(i);
-                    Essentials.essentialsPlayerList.Remove(PlayerID);
-                    Essentials.essentialsPlayerList.Add(PlayerID, GodMode);
+                    bool GodMode = !Plugin.essentialsPlayerList.Values.ElementAt(i);
+                    Plugin.essentialsPlayerList.Remove(PlayerID);
+                    Plugin.essentialsPlayerList.Add(PlayerID, GodMode);
                     godModeStatus = GodMode;
                     found = true;
                     break;
@@ -444,7 +449,7 @@ namespace Essentials
             if (!found)
             {
                 godModeStatus = true;
-                Essentials.essentialsPlayerList.Add(player.whoAmi, godModeStatus);
+                Plugin.essentialsPlayerList.Add(player.whoAmi, godModeStatus);
             }
             
             player.sendMessage("God Mode Status: " + godModeStatus.ToString());            
