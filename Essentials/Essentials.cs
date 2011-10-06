@@ -149,7 +149,6 @@ namespace Essentials
                 .Calls(Commands.MessagePlayer);
 
             Hook(HookPoints.PlayerEnteredGame, OnPlayerEnterGame);
-            Hook(HookPoints.PlayerLeftGame, OnPlayerLeaveGame);
             Hook(HookPoints.UnkownSendPacket, Net.OnUnkownPacketSend);
         }
 
@@ -171,19 +170,9 @@ namespace Essentials
 
         void OnPlayerEnterGame(ref HookContext ctx, ref HookArgs.PlayerEnteredGame args)
         {
-            CheckGodList(ctx.Connection.SlotIndex);
-        }
-
-        void OnPlayerLeaveGame(ref HookContext ctx, ref HookArgs.PlayerLeftGame args)
-        {
-            CheckGodList(ctx.Connection.SlotIndex);
-        }
-
-        void CheckGodList(int index)
-        {
-            if (essentialsPlayerList.ContainsKey(index))
+            if (essentialsPlayerList.ContainsKey(ctx.Player.Connection.SlotIndex))
             {
-                essentialsPlayerList.Remove(index);
+                essentialsPlayerList.Remove(ctx.Player.Connection.SlotIndex);
             }
         }
        
