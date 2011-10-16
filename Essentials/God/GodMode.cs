@@ -8,7 +8,7 @@ using Terraria_Server;
 
 namespace Essentials.God
 {
-    public class GodMode
+    public class GodMode : IDisposable
     {
         Essentials plugin;
         public Thread godThread;
@@ -43,6 +43,18 @@ namespace Essentials.God
                 }
                 Thread.Sleep(secondRotation * 1000);
             }
+        }
+
+        public void Dispose() //Meh, May as well
+        {
+            if (godThread != null && godThread.IsAlive)
+                godThread.Abort();
+
+            godThread = null;
+
+            plugin = null;
+            secondRotation = default(Int32);
+            Running = default(Boolean);
         }
     }
 }

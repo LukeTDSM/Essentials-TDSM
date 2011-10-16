@@ -4,28 +4,28 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 
-namespace Essentials.Kit
+namespace Essentials.Kits
 {
     public class KitManager
     {
-        public String kitFileLocation { get; set; }
-        public List<Kit> KitList { get; set; }
+        public static List<Kit> KitList { get; set; }
 
-        public KitManager(String KitFile)
+        public static void LoadData(string KitsLocation)
         {
-            kitFileLocation = KitFile;
-        }
-
-        public void LoadKits() {
             KitList = new List<Kit>();
             XmlDocument xmlReader = new XmlDocument();
 
-            xmlReader.Load(kitFileLocation);
+            xmlReader.Load(KitsLocation);
+
+            int atrIndex = 0;
 
             foreach (XmlElement element in xmlReader.DocumentElement.ChildNodes)
             {
-                Kit kit = new Kit();
-                kit.ItemList = new List<int>();
+                Kit kit = new Kit()
+                {
+                    ItemList = new List<Int32>()
+                };
+
                 foreach (XmlNode nodeList in element.ChildNodes)
                 {
                     switch (nodeList.Name.Trim().ToLower())
@@ -44,7 +44,7 @@ namespace Essentials.Kit
                             {
                                 try
                                 {
-                                    kit.ItemList.Add(Convert.ToInt32(nodeList.Attributes[0].Value));
+                                    kit.ItemList.Add(Convert.ToInt32(nodeList.Attributes[atrIndex++].Value));
                                 } catch 
                                 {
                                 }
@@ -60,57 +60,49 @@ namespace Essentials.Kit
             
         }
 
-        public void CreateTemplate()
+        public static void CreateTemplate(string Records, string Indentifier)
         {
-            XmlTextWriter xmlWriter = new XmlTextWriter(kitFileLocation, null);
+            XmlTextWriter xmlWriter = new XmlTextWriter(Records, null);
             xmlWriter.WriteStartDocument();
             //Add a template kit
-            xmlWriter.WriteStartElement("kits"); //Parent
-            xmlWriter.WriteStartElement("kit"); //Actual kit data
+            xmlWriter.WriteStartElement("kits");
 
-                xmlWriter.WriteStartElement("name");
-                xmlWriter.WriteString("admins");
-                xmlWriter.WriteEndElement();
+                WriteKitElement(xmlWriter,
+                    new Kit()
+                    {
+                        Name = "admins",
+                        Description = "Kit for Admins",
+                        ItemList = new List<Int32>()
+                        {
+                            122
+                        }
+                    }
+                );
 
-                xmlWriter.WriteStartElement("description");
-                xmlWriter.WriteString("Kit for Admins");
-                xmlWriter.WriteEndElement();
+                WriteKitElement(xmlWriter,
+                    new Kit()
+                    {
+                        Name = "builder",
+                        Description = "Kit for Builders",
+                        ItemList = new List<Int32>()
+                        {
+                            58
+                        }
+                    }
+                );
 
-                xmlWriter.WriteStartElement("item");
-                xmlWriter.WriteAttributeString("id", "122");
-                xmlWriter.WriteEndElement();
+                WriteKitElement(xmlWriter,
+                    new Kit()
+                    {
+                        Name = "mod",
+                        Description = "Kit for Mods",
+                        ItemList = new List<Int32>()
+                        {
+                            58
+                        }
+                    }
+                );
 
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement("kit");
-
-                xmlWriter.WriteStartElement("name");
-                xmlWriter.WriteString("builder");
-                xmlWriter.WriteEndElement();
-
-                xmlWriter.WriteStartElement("description");
-                xmlWriter.WriteString("Kit for Builders");
-                xmlWriter.WriteEndElement();
-
-                xmlWriter.WriteStartElement("item");
-                xmlWriter.WriteAttributeString("id", "58");
-                xmlWriter.WriteEndElement();
-
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteStartElement("kit");
-
-                xmlWriter.WriteStartElement("name");
-                xmlWriter.WriteString("mod");
-                xmlWriter.WriteEndElement();
-
-                xmlWriter.WriteStartElement("description");
-                xmlWriter.WriteString("Kit for Mods");
-                xmlWriter.WriteEndElement();
-
-                xmlWriter.WriteStartElement("item");
-                xmlWriter.WriteAttributeString("id", "58");
-                xmlWriter.WriteEndElement();
-
-            xmlWriter.WriteEndElement();
             xmlWriter.WriteEndElement();
 
             xmlWriter.WriteEndDocument();
@@ -118,7 +110,31 @@ namespace Essentials.Kit
             xmlWriter.Close();
         }
 
-        public bool ContainsKit(String KitName)
+        public static void WriteKitElement(XmlWriter xmlWriter, Kit Kit) 
+        {
+            xmlWriter.WriteStartElement("kit");
+
+                xmlWriter.WriteStartElement("name");
+                xmlWriter.WriteString(Kit.Name);
+                xmlWriter.WriteEndElement();
+
+                xmlWriter.WriteStartElement("description");
+                xmlWriter.WriteString(Kit.Description);
+                xmlWriter.WriteEndElement();
+
+                xmlWriter.WriteStartElement("item");
+
+                foreach (int Item in Kit.ItemList)
+                {
+                    xmlWriter.WriteAttributeString("id", Item.ToString());
+                }
+
+                xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteEndElement();
+        }
+
+        public static bool ContainsKit(string KitName)
         {
             foreach (Kit kit in KitList)
             {
@@ -129,7 +145,7 @@ namespace Essentials.Kit
             return false;
         }
 
-        public Kit getKit(String KitName)
+        public static Kit GetKit(string KitName)
         {
             foreach (Kit kit in KitList)
             {
@@ -138,7 +154,7 @@ namespace Essentials.Kit
                     return kit;
                 }
             }
-            return null;
+            return default(Kit);
         }
     }
 }

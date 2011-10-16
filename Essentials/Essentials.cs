@@ -10,20 +10,23 @@ using Terraria_Server.Commands;
 using Terraria_Server.Logging;
 
 using Essentials;
-using Essentials.Kit;
+using Essentials.Kits;
 using Terraria_Server.Plugins;
 using Essentials.God;
+using Essentials.Warps;
+using System.Threading;
 
 namespace Essentials
 {
     public class Essentials : BasePlugin
     {
         public Properties properties;
-        public Dictionary<int, bool> essentialsPlayerList; //int - player ID, bool - god mode
-        public Dictionary<int, bool> essentialsRPGPlayerList; //''
-        public KitManager kitManager { get; set; }
+        public Dictionary<Int32, Boolean> essentialsPlayerList; //int - player ID, bool - god mode
+        public Dictionary<Int32, Boolean> essentialsRPGPlayerList; //''
         public Dictionary<String, String> lastEventByPlayer;
 
+        public string KitFile { get; set; }
+        public string WarpFile { get; set; }
         public GodMode God { get; set; }
 
         protected override void Initialized(object state)
@@ -32,11 +35,13 @@ namespace Essentials
             Description = "Essential commands for TDSM.";
             Author = "Luke";
             Version = "0.6";
-            TDSMBuild = 29;
+            TDSMBuild = 36;
 
             string pluginFolder = Statics.PluginPath + Path.DirectorySeparatorChar + "Essentials";
-            string kitsFile = pluginFolder + Path.DirectorySeparatorChar + "kits.xml";
             string propertiesFile = pluginFolder + Path.DirectorySeparatorChar + "essentials.properties";
+
+            KitFile = pluginFolder + Path.DirectorySeparatorChar + "kits.xml";
+            WarpFile = pluginFolder + Path.DirectorySeparatorChar + "warps.xml";
             
             lastEventByPlayer = new Dictionary<String, String>();
             essentialsPlayerList = new Dictionary<Int32, Boolean>();
@@ -46,8 +51,10 @@ namespace Essentials
                 CreateDirectory(pluginFolder); //Touch Directory, We need this.
 
             //We do not want to delete records!
-            if (!File.Exists(kitsFile))
-                File.Create(kitsFile).Close();
+            if (!File.Exists(KitFile))
+                File.Create(KitFile).Close();
+            if (!File.Exists(WarpFile))
+                File.Create(WarpFile).Close();
 
             if (!File.Exists(propertiesFile))
                 File.Create(propertiesFile).Close();
@@ -57,24 +64,32 @@ namespace Essentials
             properties.pushData();
             properties.Save();
 
-            Log("Loading Kits...");
-            kitManager = new KitManager(kitsFile);
+            LoadData(KitFile, typeof(Kit).Name, KitManager.LoadData, KitManager.CreateTemplate, KitManager.KitList);
+            LoadData(WarpFile, typeof(Warp).Name, WarpManager.LoadData, WarpManager.CreateTemplate, WarpManager.WarpList);
+        }
 
-        LOADKITS:
+        public void LoadData<T>(string RecordsFile, string Identifier, 
+                                Action<String> LoadMethod, Action<String, String> CreateMethod,
+                                List<T> Items)
+        {
+            Log("Loading {0}s...", Identifier);
+
+        LOAD:
             try
             {
-                    kitManager.LoadKits();
+                LoadMethod.Invoke(RecordsFile);
             }
             catch (Exception)
             {
                 Console.Write("Create a parsable file? [Y/n]: ");
                 if (Console.ReadLine().ToLower() == "y")
                 {
-                    kitManager.CreateTemplate();
-                    goto LOADKITS; //Go back to reload data ;)...I'm lazy I KNOW
+                    CreateMethod.Invoke(RecordsFile, Identifier);
+                    goto LOAD;
                 }
             }
-            Log("Complete, Loaded " + kitManager.KitList.Count + " Kit(s)");
+
+            Log("Complete, Loaded " + Items.Count + " {0}(s)", Identifier);
         }
 
         protected override void Enabled()
@@ -87,66 +102,96 @@ namespace Essentials
             //Add Commands
             AddCommand("!")
                 .WithAccessLevel(AccessLevel.PLAYER)
-                .Calls(Commands.LastCommand);
+                .Calls(Commands.LastCommand)
+                .WithPermissionNode("essentials.!");
 
 			AddCommand("bloodmoon")
 				.WithAccessLevel(AccessLevel.OP)
-				.Calls(Commands.BloodMoon);
+                .Calls(Commands.BloodMoon)
+                .WithPermissionNode("essentials.bloodmoon");
 
             AddCommand("slay")
                 .WithAccessLevel(AccessLevel.OP)
-                .Calls(Commands.Slay);
+                .Calls(Commands.Slay)
+                .WithPermissionNode("essentials.slay");
 
             AddCommand("heal")
                 .WithAccessLevel(AccessLevel.OP)
-                .Calls(Commands.HealPlayer);
+                .Calls(Commands.HealPlayer)
+                .WithPermissionNode("essentials.heal");
 
 			AddCommand("invasion")
 				.WithAccessLevel(AccessLevel.OP)
-				.Calls(Commands.Invasion);
+				.Calls(Commands.Invasion)
+                .WithPermissionNode("essentials.invasion");
 
             AddCommand("ping")
                 .WithAccessLevel(AccessLevel.PLAYER)
-                .Calls(Commands.ConnectionTest_Ping); //Need to make a single static function
+                .Calls(Commands.ConnectionTest_Ping) //Need to make a single static function
+                .WithPermissionNode("essentials.ping");
 
             AddCommand("pong")
                 .WithAccessLevel(AccessLevel.PLAYER)
-                .Calls(Commands.ConnectionTest_Ping); //^^
+                .Calls(Commands.ConnectionTest_Ping) //^^
+                .WithPermissionNode("essentials.pong");
 
             AddCommand("suicide")
                 .WithAccessLevel(AccessLevel.PLAYER)
-                .Calls(Commands.Suicide);
+                .Calls(Commands.Suicide)
+                .WithPermissionNode("essentials.suicide");
 
             AddCommand("butcher")
                 .WithAccessLevel(AccessLevel.OP)
                 .WithDescription("Kill all NPC's within a radius")
                 .WithHelpText("Usage:    butcher <radius>")
                 .WithHelpText("          butcher <radius> -g[uide]")
-                .Calls(Commands.Butcher);
+                .Calls(Commands.Butcher)
+                .WithPermissionNode("essentials.butcher");
 
             AddCommand("kit")
                 .WithAccessLevel(AccessLevel.PLAYER)
-                .Calls(Commands.Kit);
+                .Calls(Commands.Kit)
+                .WithPermissionNode("essentials.kit");
 
             AddCommand("god")
                 .WithAccessLevel(AccessLevel.OP)
-                .Calls(Commands.GodMode);
+                .Calls(Commands.GodMode)
+                .WithPermissionNode("essentials.god");
 
             AddCommand("spawn")
                 .WithAccessLevel(AccessLevel.PLAYER)
-                .Calls(Commands.Spawn);
+                .Calls(Commands.Spawn)
+                .WithPermissionNode("essentials.spawn");
 
             AddCommand("info")
                 .WithAccessLevel(AccessLevel.PLAYER)
-                .Calls(Commands.Info);
+                .Calls(Commands.Info)
+                .WithPermissionNode("essentials.info");
 
             AddCommand("setspawn")
                 .WithAccessLevel(AccessLevel.OP)
-                .Calls(Commands.SetSpawn);
+                .Calls(Commands.SetSpawn)
+                .WithPermissionNode("essentials.setspawn");
 
             AddCommand("pm")
                 .WithAccessLevel(AccessLevel.PLAYER)
-                .Calls(Commands.MessagePlayer);
+                .Calls(Commands.MessagePlayer)
+                .WithPermissionNode("essentials.pm");
+
+            AddCommand("warp")
+                .WithAccessLevel(AccessLevel.PLAYER)
+                .Calls(Commands.Warp)
+                .WithPermissionNode("essentials.warp");
+
+            AddCommand("setwarp")
+                .WithAccessLevel(AccessLevel.OP)
+                .Calls(Commands.SetWarp)
+                .WithPermissionNode("essentials.setwarp");
+
+            AddCommand("mwarp")
+                .WithAccessLevel(AccessLevel.OP)
+                .Calls(Commands.ManageWarp)
+                .WithPermissionNode("essentials.mwarp");
 
             Hook(HookPoints.PlayerEnteredGame, OnPlayerEnterGame);
             Hook(HookPoints.UnkownSendPacket, Net.OnUnkownPacketSend);
@@ -155,6 +200,12 @@ namespace Essentials
         protected override void Disabled()
         {
             God.Running = false;
+
+            while (God.Running)
+                Thread.Sleep(100);
+
+            God.Dispose();
+
             ProgramLog.Plugin.Log(base.Name + " disabled.");
         }
 
@@ -166,6 +217,11 @@ namespace Essentials
         public static void Log(string message)
         {
             Log(ProgramLog.Plugin, message);
+        }
+
+        public static void Log(string message, params object[] args)
+        {
+            Log(String.Format(message, args));
         }
 
         void OnPlayerEnterGame(ref HookContext ctx, ref HookArgs.PlayerEnteredGame args)

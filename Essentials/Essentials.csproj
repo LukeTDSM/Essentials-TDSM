@@ -58,16 +58,19 @@
   <ItemGroup>
     <Compile Include="Commands.cs" />
     <Compile Include="God\GodMode.cs" />
-    <Compile Include="Kit\Kit.cs" />
-    <Compile Include="Kit\KitManager.cs" />
+    <Compile Include="Kits\Kit.cs" />
+    <Compile Include="Kits\KitManager.cs" />
     <Compile Include="Net.cs" />
     <Compile Include="Properties.cs" />
     <Compile Include="Essentials.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Warps\Warp.cs" />
+    <Compile Include="Warps\WarpManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
