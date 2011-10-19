@@ -321,8 +321,8 @@ namespace Essentials
                     Kit kit = KitManager.GetKit(args[0]);
                     if (kit.ItemList != null && kit.ItemList.Count > 0)
                     {
-                        foreach (int ItemID in kit.ItemList)
-                            Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.Width, player.Height, ItemID, 1, false);
+                        foreach (KeyValuePair<Int32, Int32> ItemID in kit.ItemList)
+                            Item.NewItem((int)player.Position.X, (int)player.Position.Y, player.Width, player.Height, ItemID.Key, ItemID.Value, false);
 
                         player.sendMessage("Recived the '" + kit.Name + "' Kit.");
                     }

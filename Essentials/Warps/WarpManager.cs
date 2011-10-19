@@ -12,16 +12,14 @@ namespace Essentials.Warps
     {
         public static List<Warp> WarpList { get; set; }
 
-        public static void LoadData(string WarpRecords)
+        public static List<Warp> LoadData(string WarpRecords)
         {
             WarpList = new List<Warp>();
             
             XmlDocument xmlReader = new XmlDocument();
 
             xmlReader.Load(WarpRecords);
-
-            int atrIndex = 0;
-
+            
             foreach (XmlElement element in xmlReader.DocumentElement.ChildNodes)
             {
                 Warp warp = new Warp()
@@ -52,7 +50,7 @@ namespace Essentials.Warps
                         case "location":
                             {
                                 float X, Y;
-                                if (float.TryParse(nodeList.Attributes[0].Value, out X) && float.TryParse(nodeList.Attributes[0].Value, out Y))
+                                if (float.TryParse(nodeList.Attributes["X"].Value, out X) && float.TryParse(nodeList.Attributes["Y"].Value, out Y))
                                     warp.Location = new Vector2(X, Y);
                                 else
                                     Essentials.Log("Error loading {0} Location is not a float", warp.Name);
@@ -60,11 +58,16 @@ namespace Essentials.Warps
                             }
                         case "users":
                             {
-                                warp.Users.Add(
-                                    CleanUserName(
-                                        nodeList.Attributes[atrIndex++].Value
-                                    )
-                                );
+                                if(nodeList.HasChildNodes) 
+                                    foreach (XmlNode node in nodeList.ChildNodes)
+                                    {
+                                        warp.Users.Add(
+                                            CleanUserName(
+                                                node.InnerText
+                                            )
+                                        );
+                                    }
+                                    
                                 break;
                             }
                     }
@@ -72,7 +75,7 @@ namespace Essentials.Warps
 
                 WarpList.Add(warp);
             }
-
+            return WarpList;
         }
 
         public static void Save(string WarpRecords, Action<XmlWriter> SaveMethod, string Identifier)
@@ -114,7 +117,11 @@ namespace Essentials.Warps
                     {
                         Name = "Spawn",
                         Location = new Vector2(Main.spawnTileX, Main.spawnTileY),
-                        Type = WarpType.PUBLIC
+                        Type = WarpType.PUBLIC,
+                        Users = new List<String>()
+                    {
+                        "test", "test2"
+                    }
                     });
                 }
                 , Indentifier);
@@ -134,12 +141,16 @@ namespace Essentials.Warps
                 xmlWriter.WriteEndElement();
 
                 xmlWriter.WriteStartElement("Type");
-                xmlWriter.WriteString(Warp.Type.ToString());
+                xmlWriter.WriteString(((int)Warp.Type).ToString());
                 xmlWriter.WriteEndElement();
 
                 xmlWriter.WriteStartElement("Users");
-                    foreach(string usr in Warp.Users)
-                        xmlWriter.WriteString(usr);
+                foreach (string usr in Warp.Users)
+                {
+                    xmlWriter.WriteStartElement("Name");
+                    xmlWriter.WriteString(usr);
+                    xmlWriter.WriteEndElement();
+                }
 
                 xmlWriter.WriteEndElement();
 

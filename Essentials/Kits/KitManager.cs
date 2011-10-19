@@ -10,20 +10,18 @@ namespace Essentials.Kits
     {
         public static List<Kit> KitList { get; set; }
 
-        public static void LoadData(string KitsLocation)
+        public static List<Kit> LoadData(string KitsLocation)
         {
             KitList = new List<Kit>();
             XmlDocument xmlReader = new XmlDocument();
 
             xmlReader.Load(KitsLocation);
 
-            int atrIndex = 0;
-
             foreach (XmlElement element in xmlReader.DocumentElement.ChildNodes)
             {
                 Kit kit = new Kit()
                 {
-                    ItemList = new List<Int32>()
+                    ItemList = new Dictionary<Int32, Int32>()
                 };
 
                 foreach (XmlNode nodeList in element.ChildNodes)
@@ -44,10 +42,14 @@ namespace Essentials.Kits
                             {
                                 try
                                 {
-                                    kit.ItemList.Add(Convert.ToInt32(nodeList.Attributes[atrIndex++].Value));
-                                } catch 
+                                    int ID = Convert.ToInt32(nodeList.Attributes["id"].Value);
+                                    int Stack = Convert.ToInt32(nodeList.Attributes["amount"].Value);
+                                    kit.ItemList.Add(ID, Stack);
+                                }
+                                catch
                                 {
                                 }
+                                
                                 break;
                             }
                     }
@@ -57,7 +59,7 @@ namespace Essentials.Kits
                     KitList.Add(kit);
                 }
             }
-            
+            return KitList;
         }
 
         public static void CreateTemplate(string Records, string Indentifier)
@@ -72,9 +74,9 @@ namespace Essentials.Kits
                     {
                         Name = "admins",
                         Description = "Kit for Admins",
-                        ItemList = new List<Int32>()
+                        ItemList = new Dictionary<Int32, Int32>()
                         {
-                            122
+                            {122, 1}
                         }
                     }
                 );
@@ -84,9 +86,9 @@ namespace Essentials.Kits
                     {
                         Name = "builder",
                         Description = "Kit for Builders",
-                        ItemList = new List<Int32>()
+                        ItemList = new Dictionary<Int32, Int32>()
                         {
-                            58
+                            {58, 1}
                         }
                     }
                 );
@@ -96,9 +98,9 @@ namespace Essentials.Kits
                     {
                         Name = "mod",
                         Description = "Kit for Mods",
-                        ItemList = new List<Int32>()
+                        ItemList = new Dictionary<Int32, Int32>()
                         {
-                            58
+                            {58, 1}
                         }
                     }
                 );
@@ -124,9 +126,10 @@ namespace Essentials.Kits
 
                 xmlWriter.WriteStartElement("item");
 
-                foreach (int Item in Kit.ItemList)
+                foreach (KeyValuePair<Int32, Int32> Item in Kit.ItemList)
                 {
-                    xmlWriter.WriteAttributeString("id", Item.ToString());
+                    xmlWriter.WriteAttributeString("id", Item.Key.ToString());
+                    xmlWriter.WriteAttributeString("amount", Item.Value.ToString());
                 }
 
                 xmlWriter.WriteEndElement();

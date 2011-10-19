@@ -9,6 +9,6 @@ namespace Essentials.Kits
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public List<Int32> ItemList { get; set; }
+        public Dictionary<Int32, Int32> ItemList { get; set; }
     }
 }

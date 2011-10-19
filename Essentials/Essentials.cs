@@ -63,21 +63,18 @@ namespace Essentials
             properties.Load();
             properties.pushData();
             properties.Save();
-
-            LoadData(KitFile, typeof(Kit).Name, KitManager.LoadData, KitManager.CreateTemplate, KitManager.KitList);
-            LoadData(WarpFile, typeof(Warp).Name, WarpManager.LoadData, WarpManager.CreateTemplate, WarpManager.WarpList);
         }
 
         public void LoadData<T>(string RecordsFile, string Identifier, 
-                                Action<String> LoadMethod, Action<String, String> CreateMethod,
-                                List<T> Items)
+                                Func<String, List<T>> LoadMethod, Action<String, String> CreateMethod)
         {
             Log("Loading {0}s...", Identifier);
 
         LOAD:
+            List<T> Items = null;
             try
             {
-                LoadMethod.Invoke(RecordsFile);
+                Items = LoadMethod.Invoke(RecordsFile);
             }
             catch (Exception)
             {
@@ -89,13 +86,11 @@ namespace Essentials
                 }
             }
 
-            Log("Complete, Loaded " + Items.Count + " {0}(s)", Identifier);
+            Log("Complete, Loaded " + ((Items != null) ? Items.Count : 0) + " {0}(s)", Identifier);
         }
 
         protected override void Enabled()
         {
-            ProgramLog.Log(base.Name + " enabled.");
-
             //Prepare & Start the God Mode Thread.
             God = new GodMode(this);
 
@@ -193,8 +188,16 @@ namespace Essentials
                 .Calls(Commands.ManageWarp)
                 .WithPermissionNode("essentials.mwarp");
 
+            AddCommand("warplist")
+                .WithAccessLevel(AccessLevel.PLAYER)
+                .Calls(Commands.ListWarp)
+                .WithPermissionNode("essentials.warplist");
+
             Hook(HookPoints.PlayerEnteredGame, OnPlayerEnterGame);
             Hook(HookPoints.UnkownSendPacket, Net.OnUnkownPacketSend);
+            Hook(HookPoints.WorldLoaded, OnWorldLoaded);
+
+            ProgramLog.Log(base.Name + " enabled.");
         }
 
         protected override void Disabled()
@@ -224,6 +227,15 @@ namespace Essentials
             Log(String.Format(message, args));
         }
 
+#region Hooks
+
+        void OnWorldLoaded(ref HookContext ctx, ref HookArgs.WorldLoaded args)
+        {
+            /* For the template Warp, it uses  spawn axis, so they need to be loaded. */
+            LoadData(KitFile, typeof(Kit).Name, KitManager.LoadData, KitManager.CreateTemplate);
+            LoadData(WarpFile, typeof(Warp).Name, WarpManager.LoadData, WarpManager.CreateTemplate);
+        }
+
         void OnPlayerEnterGame(ref HookContext ctx, ref HookArgs.PlayerEnteredGame args)
         {
             if (essentialsPlayerList.ContainsKey(ctx.Player.Connection.SlotIndex))
@@ -231,6 +243,8 @@ namespace Essentials
                 essentialsPlayerList.Remove(ctx.Player.Connection.SlotIndex);
             }
         }
+
+#endregion
        
         private static void CreateDirectory(string dirPath)
         {
