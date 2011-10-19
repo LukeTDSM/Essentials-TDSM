@@ -63,18 +63,18 @@ namespace Essentials.Warps
 
         public static bool operator ==(Warp warp1, Warp warp2)
         {
-            return warp1.Name.Equals(warp2.Name) &&
-                warp1.Location.Equals(warp2.Location) &&
-                warp1.Type.Equals(warp2.Type) &&
-                warp1.Users.Equals(warp2.Users);
+            return warp1.Name == warp2.Name &&
+                warp1.Location == warp2.Location &&
+                warp1.Type == warp2.Type &&
+                warp1.Users == warp2.Users;
         }
 
         public static bool operator !=(Warp warp1, Warp warp2)
         {
-            return !warp1.Name.Equals(warp2.Name) ||
-                !warp1.Location.Equals(warp2.Location) ||
-                !warp1.Type.Equals(warp2.Type) ||
-                !warp1.Users.Equals(warp2.Users);
+            return warp1.Name != warp2.Name ||
+                warp1.Location != warp2.Location ||
+                warp1.Type != warp2.Type ||
+                warp1.Users != warp2.Users;
         }
     }
 

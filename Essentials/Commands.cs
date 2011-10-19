@@ -470,7 +470,6 @@ namespace Essentials
             Server.notifyOps(String.Format("PM {0} => {1}: {2}", sender.Name, Player.Name, Message));
         }
 
-        /* Following few are untested */
         public static void Warp(ISender sender, ArgumentList args)
         {
             if (sender is Player)
@@ -501,6 +500,8 @@ namespace Essentials
                 if (!args.TryParseTwo<Int32, Int32>("", out x, "", out y))
                     throw new CommandError("Non Player Senders need to provide -x & -y tile indices.");
             }
+            else
+                Location = (sender as Player).Position / 16;
 
             string name = args.GetString(0);
 
@@ -517,7 +518,8 @@ namespace Essentials
 
             sender.Message("Warp {0} has been created.", warp.Name);
         }
-
+        
+        /* Following few are untested */
         public static void ManageWarp(ISender sender, ArgumentList args)
         {
             //remove/add players, delete warp

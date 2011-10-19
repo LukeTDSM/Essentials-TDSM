@@ -199,7 +199,7 @@ namespace Essentials.Warps
         public static Warp GetWarp(string WarpName, out int Index)
         {
             Index = -1;
-            for (int i = 0; i < WarpList.Count - 1; i++)
+            for (int i = 0; i < WarpList.Count; i++)
             {
                 Warp warp = WarpList.ToArray()[i];
                 if (warp.Name.Trim().ToLower() == WarpName.Trim().ToLower())
