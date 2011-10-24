@@ -62,7 +62,7 @@ namespace Essentials
             properties = new Properties(pluginFolder + Path.DirectorySeparatorChar + "essentials.properties");
             properties.Load();
             properties.pushData();
-            properties.Save();
+            properties.Save(false);
         }
 
         public void LoadData<T>(string RecordsFile, string Identifier, 
