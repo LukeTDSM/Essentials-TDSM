@@ -27,7 +27,7 @@ namespace Essentials
 					if (args.Count > 0)
 					{
 						if (!args[0].ToLower().Equals("time:false"))
-                            Server.World.setTime(53999, false, false);
+                            World.SetTime(53999, false, false);
 					}
                     Essentials.Log("Triggered blood moon phase.");
 				}
@@ -44,7 +44,7 @@ namespace Essentials
 				if (!Main.bloodMoon)
 				{
 					Main.bloodMoon = true;
-					Server.World.setTime(0, false, false);
+					World.SetTime(0, false, false);
 					NetMessage.SendData(25, -1, -1, "The Blood Moon is rising...", 255, 50f, 255f, 130f);
                     Essentials.Log("Triggered blood moon phase.");
 				}
@@ -164,7 +164,7 @@ namespace Essentials
 				Main.invasionX = direction;
 				Main.invasionSize = size;
 				Main.invasionDelay = delay;
-				Main.invasionType = 1;
+				Main.invasionType = InvasionType.GOBLIN_ARMY;
 				player.sendMessage("Set invasion to start, size " + Main.invasionSize.ToString() + ", type " + Main.invasionType.ToString() + ", delay " + Main.invasionDelay.ToString() + ".");
 				NetMessage.SendData((int)Packet.WORLD_DATA);
 			}
@@ -299,7 +299,7 @@ namespace Essentials
                             direction = 0;
 
                         NetMessage.SendData(28, -1, -1, "", npc.whoAmI, 9999, 10f, direction, 0);
-                        if (Main.npcs[i].StrikeNPCInternal(npc.lifeMax, 9999, (int)direction) > 0.0)
+                        if (Main.npcs[i].StrikeNPCInternal(npc.lifeMax, 9999, (int)direction, true) > 0.0)
                             killCount++;
                     }
                 }
@@ -428,20 +428,20 @@ namespace Essentials
         public static void Info(ISender sender, ArgumentList args)
         {
             sender.sendMessage("Essentials Plugin for TDSM b" + Statics.BUILD, 255, 160f, 32f, 240f);
-            String Platform = Terraria_Server.Definitions.Platform.Type.ToString();
-            switch (Terraria_Server.Definitions.Platform.Type)
+            String platform = Platform.Type.ToString();
+            switch (Platform.Type)
             {
-                case Terraria_Server.Definitions.Platform.PlatformType.LINUX:
-                    Platform = "Linux";
+                case Platform.PlatformType.LINUX:
+					platform = "Linux";
                     break;
-                case Terraria_Server.Definitions.Platform.PlatformType.MAC:
-                    Platform = "Mac";
+                case Platform.PlatformType.MAC:
+					platform = "Mac";
                     break;
-                case Terraria_Server.Definitions.Platform.PlatformType.WINDOWS:
-                    Platform = "Windows";
+                case Platform.PlatformType.WINDOWS:
+					platform = "Windows";
                     break;
             }
-            sender.sendMessage("The current OS running this sever is: " + Platform, 255, 160f, 32f, 240f);        
+            sender.sendMessage("The current OS running this sever is: " + platform, 255, 160f, 32f, 240f);        
         }
 
         public static void SetSpawn(ISender sender, ArgumentList args)
@@ -455,7 +455,7 @@ namespace Essentials
                 Main.spawnTileY = (int)(player.Position.Y / 16);
 
                 if (saveWorld)
-                    WorldIO.saveWorld(Server.World.SavePath);
+                    WorldIO.SaveWorld(World.SavePath);
 
                 Server.notifyOps(String.Format("{0} set Spawn to {1}, {2}.", sender.Name, Main.spawnTileX, Main.spawnTileY));
             }
