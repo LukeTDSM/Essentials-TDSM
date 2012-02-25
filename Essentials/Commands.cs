@@ -170,7 +170,7 @@ namespace Essentials
 				Main.invasionX = direction;
 				Main.invasionSize = size;
 				Main.invasionDelay = delay;
-				Main.invasionType = InvasionType.GOBLIN_ARMY;
+				Main.invasionType = frost ? InvasionType.FROST_LEGION : InvasionType.GOBLIN_ARMY;
 				player.sendMessage("Set invasion to start, size " + Main.invasionSize.ToString() + ", type " + Main.invasionType.ToString() + ", delay " + Main.invasionDelay.ToString() + ".");
 				NetMessage.SendData((int)Packet.WORLD_DATA);
 			}
