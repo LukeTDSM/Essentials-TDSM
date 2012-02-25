@@ -112,7 +112,9 @@ namespace Essentials
 
             AddCommand("heal")
                 .WithAccessLevel(AccessLevel.OP)
-                .Calls(Commands.HealPlayer)
+				.Calls(Commands.HealPlayer)
+				.WithHelpText("Usage:    -goblin")
+				.WithHelpText("          -frost")
                 .WithPermissionNode("essentials.heal");
 
 			AddCommand("invasion")

@@ -113,6 +113,12 @@ namespace Essentials
 
 		public static void Invasion(ISender sender, ArgumentList args)
 		{
+			var frost = args.TryPop("-frost");
+			var goblin = args.TryPop("-goblin");
+
+			if (!frost && !goblin)
+				throw new CommandError("Please specify a invasion type. Either -goblin or -frost.");
+
 			int direction = 0;
 			int size = 100;
 			int delay = 0;
