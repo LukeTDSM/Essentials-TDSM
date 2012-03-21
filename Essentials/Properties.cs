@@ -11,10 +11,12 @@ namespace Essentials
         private const bool DEFAULT_KITS_ENABLED = true;
         private const bool DEFAULT_KITS_REQUIRES_OP = true;
         private const int DEFAULT_GOD_ROTATION = 1;
+        private const bool DEFAULT_REMEMBER_PLAYER_POSITIONS = true;
 
         private const string KITS_ENABLED = "kitsenabled";
         private const string KITS_REQUIRES_OP = "kitsrequiresop";
         private const string GOD_ROTATION = "godmode-rotation";
+		private const string REMEMBER_PLAYER_POSITIONS = "remember-player-positions";
 
         public Properties(String propertiesPath) : base(propertiesPath) { }
 
@@ -23,6 +25,7 @@ namespace Essentials
             object temp = KitsEnabled;
             temp = KitsRequiresOp;
             temp = GodModeRotation;
+			temp = RememberPlayerPositions;
         }
 
         public bool KitsEnabled
@@ -41,12 +44,20 @@ namespace Essentials
             }
         }
 
-        public int GodModeRotation
-        {
-            get
-            {
-                return getValue(GOD_ROTATION, DEFAULT_GOD_ROTATION);
-            }
-        }
+		public int GodModeRotation
+		{
+			get
+			{
+				return getValue(GOD_ROTATION, DEFAULT_GOD_ROTATION);
+			}
+		}
+
+		public bool RememberPlayerPositions
+		{
+			get
+			{
+				return getValue(REMEMBER_PLAYER_POSITIONS, DEFAULT_REMEMBER_PLAYER_POSITIONS);
+			}
+		}
     }
 }

@@ -31,11 +31,13 @@ namespace Essentials
                             {
                                 if (Server.AllowTDCMRPG)
                                 {
-                                    Server.notifyOps("Failed attempt to {0} God Mode on an RPG Server.", true, (args.Number == 1) ? "give" : "remove");
+                                    Server.notifyOps(
+										String.Format("Failed attempt to {0} God Mode on an RPG Server.", true, (args.Number == 1) ? "give" : "remove"));
                                     return;
                                 }
 
-                                Server.notifyOps("{0} {1} God Mode.", true, player.Name, (args.Number == 1) ? "has" : "doesn't have");
+                                Server.notifyOps(
+									String.Format("{0} {1} God Mode.", true, player.Name, (args.Number == 1) ? "has" : "doesn't have"));
 
                                 msg.GodTDCMClient(args.Number == 1);
                                 args.Message = msg;

@@ -15,6 +15,7 @@ using Terraria_Server.Plugins;
 using Essentials.God;
 using Essentials.Warps;
 using System.Threading;
+using Terraria_Server.Misc;
 
 namespace Essentials
 {
@@ -23,20 +24,25 @@ namespace Essentials
         public Properties properties;
         public Dictionary<Int32, Boolean> essentialsPlayerList; //int - player ID, bool - god mode
         public Dictionary<Int32, Boolean> essentialsRPGPlayerList; //''
-        public Dictionary<String, String> lastEventByPlayer;
+		public Dictionary<String, String> lastEventByPlayer;
+
+		public Dictionary<String, Vector2> SpawnPositions { get; set; }
 
         public string KitFile { get; set; }
         public string WarpFile { get; set; }
         public GodMode God { get; set; }
 
+		public Essentials()
+		{
+			Name = "Essentials";
+			Description = "Essential commands for TDSM.";
+			Author = "Luke";
+			Version = "0.7";
+			TDSMBuild = 37;
+		}
+
         protected override void Initialized(object state)
         {
-            Name = "Essentials";
-            Description = "Essential commands for TDSM.";
-            Author = "Luke";
-            Version = "0.6";
-            TDSMBuild = 36;
-
             string pluginFolder = Statics.PluginPath + Path.DirectorySeparatorChar + "Essentials";
             string propertiesFile = pluginFolder + Path.DirectorySeparatorChar + "essentials.properties";
 
@@ -46,6 +52,7 @@ namespace Essentials
             lastEventByPlayer = new Dictionary<String, String>();
             essentialsPlayerList = new Dictionary<Int32, Boolean>();
             essentialsRPGPlayerList = new Dictionary<Int32, Boolean>();
+			SpawnPositions = new Dictionary<String, Vector2>();
 
             if (!Directory.Exists(pluginFolder))
                 CreateDirectory(pluginFolder); //Touch Directory, We need this.
@@ -195,9 +202,11 @@ namespace Essentials
                 .Calls(Commands.ListWarp)
                 .WithPermissionNode("essentials.warplist");
 
-            Hook(HookPoints.PlayerEnteredGame, OnPlayerEnterGame);
-            Hook(HookPoints.UnkownSendPacket, Net.OnUnkownPacketSend);
-            Hook(HookPoints.WorldLoaded, OnWorldLoaded);
+			Hook(HookPoints.PlayerEnteredGame, OnPlayerEnterGame);
+			Hook(HookPoints.UnkownSendPacket, Net.OnUnkownPacketSend);
+			Hook(HookPoints.WorldLoaded, OnWorldLoaded);
+			Hook(HookPoints.PlayerLeftGame, OnPlayerLeave);
+			Hook(HookPoints.WorldRequestMessage, OnWorldRequest);
 
             ProgramLog.Log(base.Name + " enabled.");
         }
@@ -240,11 +249,40 @@ namespace Essentials
 
         void OnPlayerEnterGame(ref HookContext ctx, ref HookArgs.PlayerEnteredGame args)
         {
-            if (essentialsPlayerList.ContainsKey(ctx.Player.Connection.SlotIndex))
+			var player = ctx.Player;
+			if (essentialsPlayerList.ContainsKey(player.Connection.SlotIndex))
             {
-                essentialsPlayerList.Remove(ctx.Player.Connection.SlotIndex);
-            }
+				essentialsPlayerList.Remove(player.Connection.SlotIndex);
+			}
+			
+			if (properties.RememberPlayerPositions && player.AuthenticatedAs != null)
+			{
+				NetMessage.SendData(7, player.whoAmi);
+			}
         }
+
+		void OnPlayerLeave(ref HookContext ctx, ref HookArgs.PlayerLeftGame args)
+		{
+			var player = ctx.Player;
+			if (properties.RememberPlayerPositions && player != null && player.AuthenticatedAs != null)
+			{
+				SpawnPositions[player.Name] = player.Position / 16;
+			}
+		}
+
+		void OnWorldRequest(ref HookContext ctx, ref HookArgs.WorldRequestMessage args)
+		{
+			var player = ctx.Player;
+			if (properties.RememberPlayerPositions && player != null && !String.IsNullOrEmpty(player.AuthenticatedAs))
+			{
+				Vector2 pos;
+				if (SpawnPositions.TryGetValue(player.AuthenticatedAs, out pos))
+				{
+					args.SpawnX = (int)pos.X;
+					args.SpawnY = (int)pos.Y;
+				}
+			}
+		}
 
 #endregion
        
